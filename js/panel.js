@@ -18,7 +18,7 @@ document.querySelectorAll('.side-link').forEach(btn=>{
 
 document.getElementById('btn-logout').addEventListener('click', ()=>{
   clearToken();
-  window.location.href = '/index.html';
+  window.location.href = BASE + '/index.html';
 });
 
 /* ── CARGAR USUARIO ── */

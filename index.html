@@ -29,7 +29,7 @@
 <script src="./js/api.js"></script>
 <script>
   // Si ya hay sesión, directo al panel
-  if(getToken()){ window.location.href = '/panel.html'; }
+  if(getToken()){ window.location.href = (window.location.pathname.startsWith('/taria-frontend') ? '/taria-frontend' : '') + '/panel.html'; }
 
   document.getElementById('btn-google').addEventListener('click', function(e){
     e.preventDefault();

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tar-IA</title>
+<link rel="stylesheet" href="/taria-frontend/css/style.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card" style="text-align:center">
+    <div class="login-logo">Tar-IA</div>
+    <div class="login-tag">Iniciando sesión…</div>
+    <div style="display:flex;justify-content:center;margin-top:10px">
+      <div class="spinner" style="border-color:rgba(200,242,48,.25);border-top-color:var(--accent)"></div>
+    </div>
+  </div>
+</div>
+<script>
+  // GitHub Pages SPA fallback — handles /auth/callback?token=...
+  const path = window.location.pathname;
+  const params = new URLSearchParams(window.location.search);
+
+  if(path.endsWith('/auth/callback') || path.endsWith('/auth/callback/')){
+    const token = params.get('token');
+    if(token){
+      localStorage.setItem('taria_token', token);
+      window.location.href = '/taria-frontend/panel.html';
+    } else {
+      window.location.href = '/taria-frontend/index.html?msg=No se recibió token de autenticación';
+    }
+  } else if(path.endsWith('/auth/error') || path.endsWith('/auth/error/')){
+    const msg = params.get('msg') || 'Error al iniciar sesión';
+    window.location.href = '/taria-frontend/index.html?msg=' + encodeURIComponent(msg);
+  } else {
+    window.location.href = '/taria-frontend/index.html';
+  }
+</script>
+</body>
+</html>

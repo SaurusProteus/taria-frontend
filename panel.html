@@ -128,6 +128,14 @@
 
 <script src="https://sdk.mercadopago.com/js/v2"></script>
 <script src="./js/api.js"></script>
+<script>
+  // Si venimos del OAuth callback, extraer y guardar el token
+  (function(){
+    const p = new URLSearchParams(window.location.search);
+    const t = p.get('token');
+    if(t){ setToken(t); window.history.replaceState({}, '', window.location.pathname); }
+  })();
+</script>
 <script src="./js/panel.js"></script>
 </body>
 </html>

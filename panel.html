@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel — Tar-IA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230b0d10'/><text y='.9em' font-size='72' x='14' fill='%23c8f230' font-family='monospace' font-weight='bold'>T</text></svg>">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="/panel.html" class="topbar-logo">Tar-IA <span class="tag">beta</span></a>
+  <div class="topbar-user">
+    <span id="user-name">Cargando…</span>
+    <span class="topbar-plan" id="user-plan">—</span>
+    <button class="btn-logout" id="btn-logout">Salir</button>
+  </div>
+</div>
+
+<div class="panel-body">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button class="side-link active" data-view="calificar">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      Calificar tarea
+    </button>
+    <button class="side-link" data-view="historial">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Historial
+    </button>
+    <button class="side-link" data-view="plan">
+      <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Mi plan
+    </button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- VISTA: CALIFICAR -->
+    <div class="view active" id="view-calificar">
+      <div class="view-title">Calificar tarea</div>
+      <div class="view-sub">Sube la clave de respuestas y los PDFs de los alumnos. Tar-IA revisa cada uno y te devuelve los PDFs anotados.</div>
+
+      <div id="calificar-alert"></div>
+
+      <div class="card">
+        <div class="field">
+          <label>Clave de respuestas (1 PDF)</label>
+          <div class="dropzone" id="drop-clave">
+            <input type="file" id="input-clave" accept="application/pdf">
+            <span id="drop-clave-text">Haz clic o arrastra el PDF de la clave aquí</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Tareas de los alumnos (varios PDFs)</label>
+          <div class="dropzone" id="drop-tareas">
+            <input type="file" id="input-tareas" accept="application/pdf" multiple>
+            <span>Haz clic o arrastra los PDFs de los alumnos aquí</span>
+          </div>
+          <div class="file-list" id="tareas-list"></div>
+        </div>
+
+        <div class="field">
+          <label>Instrucciones especiales (opcional)</label>
+          <textarea id="input-instrucciones" placeholder="Ej. Acepta resultados equivalentes aunque no estén simplificados…"></textarea>
+        </div>
+
+        <button class="btn-primary" id="btn-calificar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Calificar y descargar ZIP
+        </button>
+      </div>
+    </div>
+
+    <!-- VISTA: HISTORIAL -->
+    <div class="view" id="view-historial">
+      <div class="view-title">Historial</div>
+      <div class="view-sub">Tus últimas 50 tareas calificadas.</div>
+      <div class="card" style="overflow-x:auto">
+        <table id="tabla-historial">
+          <thead>
+            <tr><th>Archivo</th><th>Calificación</th><th>Modelo</th><th>Páginas</th><th>Estado</th><th>Fecha</th></tr>
+          </thead>
+          <tbody id="historial-body">
+            <tr><td colspan="6" style="text-align:center;color:var(--text3)">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VISTA: PLAN -->
+    <div class="view" id="view-plan">
+      <div class="view-title">Mi plan</div>
+      <div class="view-sub">Consulta tus créditos disponibles y mejora tu plan cuando lo necesites.</div>
+
+      <div class="stat-row">
+        <div class="stat-mini">
+          <div class="stat-mini-num" id="stat-plan">—</div>
+          <div class="stat-mini-label">Plan actual</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-num" id="stat-revisiones">—</div>
+          <div class="stat-mini-label">Revisiones restantes</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-num">$20</div>
+          <div class="stat-mini-label">por 50 revisiones extra</div>
+        </div>
+      </div>
+
+      <div id="plan-grid" class="plan-grid">
+        <div style="color:var(--text3);font-size:13px">Cargando planes…</div>
+      </div>
+
+      <div style="margin-top:24px">
+        <button class="btn-secondary" id="btn-extra">+ Comprar 50 revisiones extra ($20 MXN)</button>
+      </div>
+
+      <div id="checkout-box" style="margin-top:28px"></div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="./js/api.js"></script>
+<script src="./js/panel.js"></script>
+</body>
+</html>

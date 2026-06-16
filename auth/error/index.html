@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Error al iniciar sesión — Tar-IA</title>
+</head>
+<body>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const msg = params.get('msg') || 'Error desconocido';
+  window.location.href = '/index.html?msg=' + encodeURIComponent(msg);
+</script>
+</body>
+</html>

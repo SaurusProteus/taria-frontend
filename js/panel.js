@@ -28,6 +28,7 @@ async function cargarUsuario(){
     if(!currentUser) return;
     document.getElementById('user-name').textContent = currentUser.name;
     document.getElementById('user-plan').textContent = currentUser.plan.toUpperCase();
+    document.getElementById('user-creditos').textContent = currentUser.revisiones_restantes + ' créditos';
   }catch(e){
     console.error(e);
   }
@@ -104,7 +105,11 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     return;
   }
   if(currentUser && currentUser.plan !== 'owner' && currentUser.revisiones_restantes < tareasFiles.length){
-    alertBox.innerHTML = `<div class="alert alert-error">Tienes ${currentUser.revisiones_restantes} revisiones disponibles pero subiste ${tareasFiles.length} tareas. Ve a "Mi plan" para agregar más.</div>`;
+    const restantes = currentUser.revisiones_restantes;
+    alertBox.innerHTML = `<div class="alert alert-error">
+      Tienes <strong>${restantes} crédito${restantes!==1?'s':''}</strong> — puedes calificar hasta ${restantes} de los ${tareasFiles.length} PDFs que subiste.
+      ${restantes > 0 ? `Quita ${tareasFiles.length - restantes} archivo${tareasFiles.length-restantes!==1?'s':''} de la lista para continuar, o ve a <strong>Mi plan</strong> para comprar más créditos.` : 'Ve a <strong>Mi plan</strong> para comprar créditos.'}
+    </div>`;
     return;
   }
 
@@ -132,6 +137,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     }
     if(!res.ok) throw new Error(`Error ${res.status}`);
 
+    const invalidos = res.headers.get('X-Archivos-Invalidos');
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -141,7 +147,13 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     a.click();
     a.remove();
 
-    alertBox.innerHTML = '<div class="alert alert-success">¡Listo! Tus tareas calificadas se descargaron. Revisa tu carpeta de descargas.</div>';
+    let msg = '¡Listo! Tus tareas calificadas se descargaron. Revisa tu carpeta de descargas.';
+    msg += '<br><small style="opacity:.7">⚠️ Los PDFs revisados no se almacenan en la nube — guarda tu ZIP en un lugar seguro.</small>';
+    if(invalidos){
+      const nombres = decodeURIComponent(invalidos);
+      msg += `<br><small style="color:#f5b060">Archivos que no pudieron procesarse (no consumieron crédito): ${nombres}</small>`;
+    }
+    alertBox.innerHTML = `<div class="alert alert-success">${msg}</div>`;
     claveFile = null;
     tareasFiles = [];
     document.getElementById('drop-clave-text').textContent = 'Haz clic o arrastra el PDF de la clave aquí';

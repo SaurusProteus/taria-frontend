@@ -117,6 +117,23 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Calificando…';
 
+  // Barra de progreso estimada (paralelo: ~35 seg base + 8 seg por tarea)
+  const progresoWrap = document.getElementById('progreso-wrap');
+  const progresoBar = document.getElementById('progreso-bar');
+  const progresoPct = document.getElementById('progreso-pct');
+  const progresoLabel = document.getElementById('progreso-label');
+  const estimadoSeg = 35 + tareasFiles.length * 8;
+  progresoWrap.style.display = 'block';
+  let elapsed = 0;
+  const tick = setInterval(()=>{
+    elapsed += 1;
+    const pct = Math.min(95, Math.round((elapsed / estimadoSeg) * 100));
+    progresoBar.style.width = pct + '%';
+    progresoPct.textContent = pct + '%';
+    const restante = Math.max(0, estimadoSeg - elapsed);
+    progresoLabel.textContent = restante > 5 ? `Procesando… ~${restante} seg restantes` : 'Casi listo…';
+  }, 1000);
+
   try{
     const formData = new FormData();
     formData.append('clave', claveFile);
@@ -162,8 +179,11 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
   }catch(e){
     alertBox.innerHTML = `<div class="alert alert-error">Algo salió mal: ${e.message}</div>`;
   }finally{
+    clearInterval(tick);
+    progresoBar.style.width = '100%';
+    setTimeout(()=>{ progresoWrap.style.display = 'none'; progresoBar.style.width = '0%'; }, 1500);
     btn.disabled = false;
-    btn.innerHTML = 'Calificar y descargar ZIP';
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Calificar y descargar ZIP';
   }
 });
 
@@ -181,6 +201,7 @@ async function cargarHistorial(){
       <tr>
         <td>${t.nombre_archivo}</td>
         <td>${t.calificacion ?? '—'}</td>
+        <td style="text-align:center;color:var(--accent);font-family:'Space Mono',monospace;font-size:12px">−1</td>
         <td style="font-family:'Space Mono',monospace;font-size:11px">${(t.modelo_usado||'').replace('claude-','')}</td>
         <td>${t.num_paginas ?? '—'}</td>
         <td><span class="badge ${t.estado === 'completado' ? 'badge-ok' : 'badge-pending'}">${t.estado}</span></td>

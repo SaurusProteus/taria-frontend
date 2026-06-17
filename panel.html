@@ -11,7 +11,7 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <a href="/panel.html" class="topbar-logo">Tar-IA <span class="tag">beta</span></a>
+  <a href="https://saurusproteus.github.io/taria-frontend/panel.html" class="topbar-logo">Tar-IA <span class="tag">beta</span></a>
   <div class="topbar-user">
     <span id="user-name">Cargando…</span>
     <span class="topbar-plan" id="user-plan">—</span>
@@ -70,6 +70,17 @@
           <textarea id="input-instrucciones" placeholder="Ej. Acepta resultados equivalentes aunque no estén simplificados…"></textarea>
         </div>
 
+        <div id="progreso-wrap" style="display:none;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px">
+            <span id="progreso-label">Procesando…</span>
+            <span id="progreso-pct">0%</span>
+          </div>
+          <div style="background:var(--bg3);border-radius:99px;height:6px;overflow:hidden">
+            <div id="progreso-bar" style="height:100%;width:0%;background:var(--accent);border-radius:99px;transition:width .4s ease"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">Las tareas se revisan en paralelo — el tiempo real puede variar según el tamaño de los archivos.</div>
+        </div>
+
         <button class="btn-primary" id="btn-calificar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           Calificar y descargar ZIP
@@ -84,7 +95,7 @@
       <div class="card" style="overflow-x:auto">
         <table id="tabla-historial">
           <thead>
-            <tr><th>Archivo</th><th>Calificación</th><th>Modelo</th><th>Páginas</th><th>Estado</th><th>Fecha</th></tr>
+            <tr><th>Archivo</th><th>Calificación</th><th>Crédito</th><th>Modelo</th><th>Páginas</th><th>Estado</th><th>Fecha</th></tr>
           </thead>
           <tbody id="historial-body">
             <tr><td colspan="6" style="text-align:center;color:var(--text3)">Cargando…</td></tr>
@@ -125,6 +136,10 @@
     </div>
 
   </div>
+</div>
+
+<div style="text-align:center;padding:20px;font-size:11px;color:var(--text3);border-top:0.5px solid var(--border);margin-top:40px">
+  Powered by <a href="https://enginerd.mx" target="_blank" style="color:var(--accent);text-decoration:none;font-family:'Space Mono',monospace">Enginerd</a> · Soluciones tecnológicas en Salamanca, Gto.
 </div>
 
 <script src="https://sdk.mercadopago.com/js/v2"></script>

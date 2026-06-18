@@ -212,24 +212,50 @@ async function cargarHistorial(){
   }
 }
 
+/* ── TIPO DE CAMBIO USD ── */
+let _tcUSD = null;
+
+async function obtenerTC(){
+  if(_tcUSD) return _tcUSD;
+  try{
+    const r = await fetch('https://open.er-api.com/v6/latest/USD');
+    const d = await r.json();
+    _tcUSD = d.rates?.MXN || null;
+  }catch(_){ _tcUSD = null; }
+  return _tcUSD;
+}
+
+function usdRef(mxn, tc){
+  if(!tc || mxn === 0) return '';
+  const usd = (mxn / tc).toFixed(2);
+  return `<div class="plan-usd">~$${usd} USD</div>`;
+}
+
 /* ── PLANES ── */
 async function cargarPlanes(){
   document.getElementById('stat-plan').textContent = currentUser ? currentUser.plan.toUpperCase() : '—';
   document.getElementById('stat-revisiones').textContent = currentUser ? currentUser.revisiones_restantes : '—';
 
+  const [planes, tc] = await Promise.all([apiGet('/planes'), obtenerTC()]);
   const grid = document.getElementById('plan-grid');
   try{
-    const planes = await apiGet('/planes');
     const nombres = { gratis:'Gratis', basico:'Básico', pro:'Pro', institucional:'Institucional' };
     grid.innerHTML = Object.entries(planes).map(([key, p])=>`
       <div class="plan-card ${currentUser && currentUser.plan === key ? 'current' : ''}">
         <div class="plan-name">${nombres[key] || key}</div>
-        <div class="plan-price">${p.precio_mxn === 0 ? 'Gratis' : `$${p.precio_mxn}`}${p.precio_mxn > 0 ? '<small>/mes</small>' : ''}</div>
-        <div class="plan-revs">${p.revisiones} revisiones/mes</div>
+        <div class="plan-price">${p.precio_mxn === 0 ? 'Gratis' : `$${p.precio_mxn} <small>MXN</small>`}</div>
+        ${usdRef(p.precio_mxn, tc)}
+        <div class="plan-revs">${p.revisiones} revisiones</div>
         ${currentUser && currentUser.plan === key
           ? '<button class="btn-secondary" disabled style="opacity:.5;width:100%">Plan actual</button>'
           : `<button class="btn-primary btn-comprar-plan" data-plan="${key}" style="width:100%;justify-content:center">Elegir plan</button>`}
       </div>`).join('');
+
+    if(tc){
+      grid.insertAdjacentHTML('afterend',
+        `<p class="fx-disclaimer">Precio de referencia. El cobro se realiza en pesos mexicanos (MXN); tu banco o tarjeta aplicará su propio tipo de cambio.</p>`
+      );
+    }
 
     grid.querySelectorAll('.btn-comprar-plan').forEach(btn=>{
       btn.addEventListener('click', ()=>iniciarCheckoutPlan(btn.dataset.plan));

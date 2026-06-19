@@ -322,6 +322,7 @@ async function cargarPlanes(){
       <div class="plan-card ${currentUser && currentUser.plan === key ? 'current' : ''}">
         <div class="plan-name">${nombres[key] || key}</div>
         <div class="plan-price">${p.precio_mxn === 0 ? 'Gratis' : `$${p.precio_mxn} <small>MXN</small>`}</div>
+        ${p.precio_mxn === 0 ? '' : '<div class="plan-iva">IVA incluido</div>'}
         ${usdRef(p.precio_mxn, tc)}
         <div class="plan-revs">${p.revisiones} revisiones</div>
         ${currentUser && currentUser.plan === key
@@ -329,11 +330,7 @@ async function cargarPlanes(){
           : `<button class="btn-primary btn-comprar-plan" data-plan="${key}" style="width:100%;justify-content:center">Elegir plan</button>`}
       </div>`).join('');
 
-    if(tc){
-      grid.insertAdjacentHTML('afterend',
-        `<p class="fx-disclaimer">Precio de referencia. El cobro se realiza en pesos mexicanos (MXN); tu banco o tarjeta aplicará su propio tipo de cambio.</p>`
-      );
-    }
+    document.getElementById('fx-disclaimer').style.display = 'block';
 
     grid.querySelectorAll('.btn-comprar-plan').forEach(btn=>{
       btn.addEventListener('click', ()=>iniciarCheckoutPlan(btn.dataset.plan));
@@ -355,6 +352,7 @@ function initMP(){
 async function iniciarCheckoutPlan(plan){
   const box = document.getElementById('checkout-box');
   box.innerHTML = '<div class="alert alert-info">Generando enlace de pago…</div>';
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
   try{
     const pref = await apiPost(`/pagos/preferencia?plan=${plan}`);
     renderCheckout(pref, box);
@@ -366,6 +364,7 @@ async function iniciarCheckoutPlan(plan){
 async function iniciarCheckoutExtras(){
   const box = document.getElementById('checkout-box');
   box.innerHTML = '<div class="alert alert-info">Generando enlace de pago…</div>';
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
   try{
     const pref = await apiPost('/pagos/creditos-extra');
     renderCheckout(pref, box);
@@ -384,8 +383,9 @@ function renderCheckout(pref, box){
     box.innerHTML = '<div class="alert alert-error">No se pudo cargar MercadoPago. Verifica la Public Key en js/api.js.</div>';
     return;
   }
-  box.innerHTML = '<div id="wallet-container"></div>';
+  box.innerHTML = '<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Completa tu pago con MercadoPago:</div><div id="wallet-container"></div>';
   mp.bricks().create('wallet', 'wallet-container', {
     initialization: { preferenceId: pref.preference_id }
   });
+  setTimeout(()=>box.scrollIntoView({ behavior: 'smooth', block: 'center' }), 600);
 }

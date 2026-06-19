@@ -21,6 +21,48 @@ document.getElementById('btn-logout').addEventListener('click', ()=>{
   window.location.href = BASE + '/index.html';
 });
 
+/* ── CONSENTIMIENTO LEGAL ── */
+function mostrarModalConsent(pendingDocs){
+  const modal = document.getElementById('modal-consent');
+  const check = document.getElementById('consent-check');
+  const btn   = document.getElementById('btn-consent');
+  const docsEl = document.getElementById('consent-docs');
+
+  // Actualizar links si los documentos tienen URL
+  pendingDocs.forEach(d => {
+    if(d.doc_type === 'aviso_privacidad' && d.content_url)
+      document.getElementById('link-aviso').href = d.content_url;
+    if(d.doc_type === 'terminos_uso' && d.content_url)
+      document.getElementById('link-terminos').href = d.content_url;
+  });
+
+  const nombres = { aviso_privacidad: 'Aviso de Privacidad', terminos_uso: 'Términos de Uso' };
+  docsEl.innerHTML = pendingDocs.map(d =>
+    `<div style="font-size:12px;color:var(--text3);margin-bottom:4px">
+      📄 ${nombres[d.doc_type] || d.doc_type} — versión ${d.version} (${d.effective_date})
+    </div>`
+  ).join('');
+
+  modal.style.display = 'flex';
+  check.addEventListener('change', () => {
+    btn.disabled = !check.checked;
+    btn.style.opacity = check.checked ? '1' : '.5';
+  });
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'Guardando…';
+    try{
+      await apiPost('/legal/consent', { doc_ids: pendingDocs.map(d => d.id) });
+      modal.style.display = 'none';
+    }catch(e){
+      btn.disabled = false;
+      btn.textContent = 'Acepto y continuar';
+      alert('Error al guardar tu consentimiento. Intenta de nuevo.');
+    }
+  });
+}
+
 /* ── CARGAR USUARIO ── */
 async function cargarUsuario(){
   try{
@@ -29,6 +71,9 @@ async function cargarUsuario(){
     document.getElementById('user-name').textContent = currentUser.name;
     document.getElementById('user-plan').textContent = currentUser.plan.toUpperCase();
     document.getElementById('user-creditos').textContent = currentUser.revisiones_restantes + ' créditos';
+    if(currentUser.needs_consent && currentUser.pending_docs?.length > 0){
+      mostrarModalConsent(currentUser.pending_docs);
+    }
   }catch(e){
     console.error(e);
   }

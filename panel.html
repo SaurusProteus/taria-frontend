@@ -61,6 +61,10 @@
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Mi cuenta
     </button>
+    <button class="side-link side-link-admin" data-view="admin" id="side-admin" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>
+      Admin
+    </button>
   </div>
 
   <!-- MAIN -->
@@ -208,6 +212,72 @@
         <button class="btn-secondary" id="btn-eliminar-cuenta" style="border-color:var(--error);color:var(--error)">
           Eliminar mi cuenta
         </button>
+      </div>
+    </div>
+
+    <!-- VISTA: ADMIN (solo dueño) -->
+    <div class="view" id="view-admin">
+      <div class="view-title">Panel del negocio</div>
+      <div class="view-sub">Métricas en tiempo real de Tar-IA. Visible solo para el dueño.</div>
+
+      <div id="admin-alert"></div>
+
+      <!-- KPIs principales -->
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-accent">
+          <div class="kpi-label">Ingresos totales</div>
+          <div class="kpi-num" id="kpi-ingresos">—</div>
+          <div class="kpi-foot" id="kpi-ingresos-mes">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Margen estimado</div>
+          <div class="kpi-num" id="kpi-margen">—</div>
+          <div class="kpi-foot">tras costo de API estimado</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Usuarios</div>
+          <div class="kpi-num" id="kpi-usuarios">—</div>
+          <div class="kpi-foot" id="kpi-usuarios-mes">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Tareas calificadas</div>
+          <div class="kpi-num" id="kpi-tareas">—</div>
+          <div class="kpi-foot" id="kpi-tareas-mes">—</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Ventas (pagos)</div>
+          <div class="kpi-num" id="kpi-ventas">—</div>
+          <div class="kpi-foot">transacciones completadas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Costo API estimado</div>
+          <div class="kpi-num" id="kpi-costo">—</div>
+          <div class="kpi-foot">~$0.60 MXN por tarea</div>
+        </div>
+      </div>
+
+      <!-- Desglose por plan -->
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="font-size:15px;margin-bottom:16px">Usuarios por plan</h3>
+        <div id="admin-planes"><div style="color:var(--text3);font-size:13px">Cargando…</div></div>
+      </div>
+
+      <!-- Tabla transacciones -->
+      <div class="card" style="margin-bottom:20px;overflow-x:auto">
+        <h3 style="font-size:15px;margin-bottom:14px">Últimas transacciones</h3>
+        <table>
+          <thead><tr><th>Cliente</th><th>Concepto</th><th>Monto</th><th>Créditos</th><th>Fecha</th></tr></thead>
+          <tbody id="admin-tx"><tr><td colspan="5" style="text-align:center;color:var(--text3)">Cargando…</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Tabla usuarios -->
+      <div class="card" style="overflow-x:auto">
+        <h3 style="font-size:15px;margin-bottom:14px">Usuarios recientes</h3>
+        <table>
+          <thead><tr><th>Nombre</th><th>Correo</th><th>Plan</th><th>Créditos</th><th>Registro</th></tr></thead>
+          <tbody id="admin-usuarios"><tr><td colspan="5" style="text-align:center;color:var(--text3)">Cargando…</td></tr></tbody>
+        </table>
       </div>
     </div>
 

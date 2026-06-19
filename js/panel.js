@@ -14,8 +14,68 @@ document.querySelectorAll('.side-link').forEach(btn=>{
     if(btn.dataset.view === 'historial') cargarHistorial();
     if(btn.dataset.view === 'plan') cargarPlanes();
     if(btn.dataset.view === 'cuenta') cargarCuenta();
+    if(btn.dataset.view === 'admin') cargarAdmin();
   });
 });
+
+/* ── PANEL ADMIN (solo dueño) ── */
+const fmtMXN = n => '$' + Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtFecha = s => s ? new Date(s).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+
+async function cargarAdmin(){
+  const alert = document.getElementById('admin-alert');
+  alert.innerHTML = '';
+  try{
+    const d = await apiGet('/admin/overview');
+
+    document.getElementById('kpi-ingresos').textContent = fmtMXN(d.ingresos_total);
+    document.getElementById('kpi-ingresos-mes').textContent = fmtMXN(d.ingresos_mes) + ' este mes';
+    document.getElementById('kpi-margen').textContent = fmtMXN(d.margen_estimado);
+    document.getElementById('kpi-usuarios').textContent = d.usuarios_total;
+    document.getElementById('kpi-usuarios-mes').textContent = '+' + d.usuarios_nuevos_mes + ' este mes';
+    document.getElementById('kpi-tareas').textContent = d.tareas_total;
+    document.getElementById('kpi-tareas-mes').textContent = '+' + d.tareas_mes + ' este mes';
+    document.getElementById('kpi-ventas').textContent = d.ventas_total;
+    document.getElementById('kpi-costo').textContent = fmtMXN(d.costo_api_estimado);
+
+    // Barras por plan
+    const planes = d.usuarios_por_plan || {};
+    const max = Math.max(1, ...Object.values(planes));
+    const orden = ['gratis','basico','pro','institucional','owner'];
+    const keys = Object.keys(planes).sort((a,b)=>orden.indexOf(a)-orden.indexOf(b));
+    document.getElementById('admin-planes').innerHTML = keys.map(k=>`
+      <div class="plan-bar-row">
+        <span class="plan-bar-name">${k}</span>
+        <span class="plan-bar-track"><span class="plan-bar-fill" style="width:${(planes[k]/max*100)}%"></span></span>
+        <span class="plan-bar-count">${planes[k]}</span>
+      </div>`).join('') || '<div style="color:var(--text3);font-size:13px">Sin datos</div>';
+
+    // Transacciones
+    const tx = d.transacciones_recientes || [];
+    document.getElementById('admin-tx').innerHTML = tx.length ? tx.map(t=>`
+      <tr>
+        <td>${t.nombre || '—'}</td>
+        <td style="font-size:12px">${t.plan_comprado || '—'}</td>
+        <td style="color:var(--accent);font-family:'Space Mono',monospace">${fmtMXN(t.monto)}</td>
+        <td>${t.creditos_agregados ?? '—'}</td>
+        <td style="font-size:12px;color:var(--text3)">${fmtFecha(t.fecha)}</td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text3)">Aún no hay transacciones.</td></tr>';
+
+    // Usuarios
+    const us = d.usuarios_recientes || [];
+    document.getElementById('admin-usuarios').innerHTML = us.length ? us.map(u=>`
+      <tr>
+        <td>${u.name || '—'}</td>
+        <td style="font-size:12px;color:var(--text3)">${u.email || '—'}</td>
+        <td><span class="badge ${u.plan==='gratis'?'badge-pending':'badge-ok'}">${(u.plan||'').toUpperCase()}</span></td>
+        <td>${u.revisiones_restantes ?? '—'}</td>
+        <td style="font-size:12px;color:var(--text3)">${fmtFecha(u.created_at)}</td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text3)">Sin usuarios.</td></tr>';
+
+  }catch(e){
+    alert.innerHTML = `<div class="alert alert-error">No se pudo cargar el panel: ${e.message}</div>`;
+  }
+}
 
 /* ── MI CUENTA ── */
 function cargarCuenta(){
@@ -104,6 +164,9 @@ async function cargarUsuario(){
     document.getElementById('user-name').textContent = currentUser.name;
     document.getElementById('user-plan').textContent = currentUser.plan.toUpperCase();
     document.getElementById('user-creditos').textContent = currentUser.revisiones_restantes + ' créditos';
+    if(currentUser.plan === 'owner'){
+      document.getElementById('side-admin').style.display = 'flex';
+    }
     if(currentUser.needs_consent && currentUser.pending_docs?.length > 0){
       mostrarModalConsent(currentUser.pending_docs);
     }

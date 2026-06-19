@@ -9,21 +9,55 @@
 </head>
 <body>
 
-<div class="login-wrap">
-  <div class="login-glow"></div>
-  <div class="login-card">
-    <div class="login-logo">Tar-IA</div>
-    <div class="login-tag">Calificación automática de tareas con IA</div>
+<div class="auth-page">
 
-    <div id="error-box"></div>
+  <!-- IZQUIERDA: propuesta de valor + mockup -->
+  <div class="auth-pitch">
+    <div class="auth-brand">Tar-IA <span>by Enginerd</span></div>
+    <h1 class="auth-headline">Califica un grupo entero<br>en lo que te tomas un café.</h1>
+    <p class="auth-lede">
+      Sube la clave de respuestas y las tareas de tus alumnos. Tar-IA revisa cada una
+      y te regresa los PDFs anotados, con calificación y observaciones página por página.
+    </p>
+    <ul class="auth-points">
+      <li>Anotaciones listas para entregar</li>
+      <li>Detecta posibles errores en tu propia clave</li>
+      <li>Tú revisas y decides — la IA solo te adelanta el trabajo</li>
+    </ul>
 
-    <a href="#" id="btn-google" class="btn-google">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continuar con Google
-    </a>
-
-    <div class="login-foot">Al continuar aceptas el uso responsable del servicio.<br>¿Problemas para entrar? <a href="https://wa.me/525658720307" target="_blank">Escríbenos</a></div>
+    <div class="mock-sheet" aria-hidden="true">
+      <div class="mock-head">
+        <div class="mock-grade">9.2</div>
+        <div class="mock-grade-sub">/ 10.0</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-name">Tarea 4 — Cálculo Diferencial</div>
+        <div class="mock-row"><span class="mk ok">✓</span> Problema 1 · Límite por sustitución</div>
+        <div class="mock-row"><span class="mk ok">✓</span> Problema 2 · Derivada de un cociente</div>
+        <div class="mock-row"><span class="mk bad">✗</span> Problema 3 · Falta simplificar el resultado</div>
+        <div class="mock-row"><span class="mk ok">✓</span> Problema 4 · Integral definida</div>
+        <div class="mock-foot">Revisado con Tar-IA · enginerd.mx</div>
+      </div>
+    </div>
   </div>
+
+  <!-- DERECHA: login -->
+  <div class="auth-login">
+    <div class="login-card">
+      <div class="login-logo">Tar-IA</div>
+      <div class="login-tag">Entra con tu cuenta de Google para empezar</div>
+
+      <div id="error-box"></div>
+
+      <a href="#" id="btn-google" class="btn-google">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </a>
+
+      <div class="login-foot">Al continuar aceptas el uso responsable del servicio.<br>¿Problemas para entrar? <a href="https://wa.me/525658720307" target="_blank">Escríbenos</a></div>
+    </div>
+  </div>
+
 </div>
 
 <script src="./js/api.js"></script>

@@ -13,7 +13,40 @@ document.querySelectorAll('.side-link').forEach(btn=>{
     document.getElementById('view-' + btn.dataset.view).classList.add('active');
     if(btn.dataset.view === 'historial') cargarHistorial();
     if(btn.dataset.view === 'plan') cargarPlanes();
+    if(btn.dataset.view === 'cuenta') cargarCuenta();
   });
+});
+
+/* ── MI CUENTA ── */
+function cargarCuenta(){
+  if(!currentUser) return;
+  document.getElementById('cuenta-nombre').textContent = currentUser.name;
+  document.getElementById('cuenta-email').textContent = currentUser.email;
+  document.getElementById('cuenta-plan').textContent = currentUser.plan.toUpperCase();
+}
+
+document.getElementById('btn-eliminar-cuenta').addEventListener('click', async ()=>{
+  const alertBox = document.getElementById('cuenta-alert');
+  const confirmado = confirm(
+    '¿Seguro que quieres eliminar tu cuenta?\n\n' +
+    'Se borrarán tu perfil, historial y créditos de forma permanente. ' +
+    'Esta acción no se puede deshacer.'
+  );
+  if(!confirmado) return;
+
+  const btn = document.getElementById('btn-eliminar-cuenta');
+  btn.disabled = true;
+  btn.textContent = 'Eliminando…';
+  try{
+    await apiDelete('/auth/me');
+    clearToken();
+    alert('Tu cuenta ha sido eliminada. Gracias por usar Tar-IA.');
+    window.location.href = BASE + '/index.html';
+  }catch(e){
+    alertBox.innerHTML = `<div class="alert alert-error">No se pudo eliminar la cuenta: ${e.message}</div>`;
+    btn.disabled = false;
+    btn.textContent = 'Eliminar mi cuenta';
+  }
 });
 
 document.getElementById('btn-logout').addEventListener('click', ()=>{

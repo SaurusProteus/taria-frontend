@@ -32,6 +32,13 @@ async function apiPost(path, body){
   return r.json();
 }
 
+async function apiDelete(path){
+  const r = await fetch(`${API_URL}${path}`, { method: 'DELETE', headers: authHeaders() });
+  if(r.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+  if(!r.ok) throw new Error(`Error ${r.status}`);
+  return r.json();
+}
+
 function requireAuth(){
   if(!getToken()){ window.location.href = BASE + '/index.html'; }
 }

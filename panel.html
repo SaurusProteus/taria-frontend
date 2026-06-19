@@ -32,8 +32,8 @@
     <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;margin-bottom:24px">
       <input type="checkbox" id="consent-check" style="margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0">
       <span style="font-size:13px;color:var(--text2);line-height:1.5">
-        He leído y acepto el <a id="link-aviso" href="https://enginerd.mx/legal/aviso-privacidad" target="_blank" style="color:var(--accent)">Aviso de Privacidad</a>
-        y los <a id="link-terminos" href="https://enginerd.mx/legal/terminos-uso" target="_blank" style="color:var(--accent)">Términos de Uso</a>.
+        He leído y acepto el <a id="link-aviso" href="https://saurusproteus.github.io/taria-frontend/legal/aviso-privacidad.html" target="_blank" style="color:var(--accent)">Aviso de Privacidad</a>
+        y los <a id="link-terminos" href="https://saurusproteus.github.io/taria-frontend/legal/terminos-uso.html" target="_blank" style="color:var(--accent)">Términos de Uso</a>.
       </span>
     </label>
     <button id="btn-consent" class="btn-primary" disabled style="width:100%;justify-content:center;opacity:.5">
@@ -56,6 +56,10 @@
     <button class="side-link" data-view="plan">
       <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
       Mi plan
+    </button>
+    <button class="side-link" data-view="cuenta">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Mi cuenta
     </button>
   </div>
 
@@ -155,6 +159,46 @@
       </div>
 
       <div id="checkout-box" style="margin-top:28px"></div>
+    </div>
+
+    <!-- VISTA: MI CUENTA -->
+    <div class="view" id="view-cuenta">
+      <div class="view-title">Mi cuenta</div>
+      <div class="view-sub">Tus datos, privacidad y opciones de cuenta.</div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="font-size:15px;margin-bottom:14px">Tus datos</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text2)">
+          <div><span style="color:var(--text3)">Nombre:</span> <span id="cuenta-nombre">—</span></div>
+          <div><span style="color:var(--text3)">Correo:</span> <span id="cuenta-email">—</span></div>
+          <div><span style="color:var(--text3)">Plan:</span> <span id="cuenta-plan">—</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h3 style="font-size:15px;margin-bottom:10px">Privacidad</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">
+          Los documentos que subes <strong style="color:var(--text)">no se almacenan en la nube</strong>:
+          se procesan en memoria solo durante la calificación y se descartan al terminar. Solo guardamos
+          metadatos del historial (nombre del archivo, calificación, fecha).
+        </p>
+        <div style="display:flex;gap:16px;font-size:13px">
+          <a href="legal/aviso-privacidad.html" target="_blank" style="color:var(--accent)">Aviso de Privacidad</a>
+          <a href="legal/terminos-uso.html" target="_blank" style="color:var(--accent)">Términos de Uso</a>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(255,93,93,.3)">
+        <h3 style="font-size:15px;margin-bottom:10px;color:var(--error)">Eliminar mi cuenta</h3>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">
+          Borra tu perfil, historial y créditos de forma permanente. Conservaremos únicamente los
+          comprobantes de pago que la ley fiscal nos obliga a mantener. Esta acción no se puede deshacer.
+        </p>
+        <div id="cuenta-alert"></div>
+        <button class="btn-secondary" id="btn-eliminar-cuenta" style="border-color:var(--error);color:var(--error)">
+          Eliminar mi cuenta
+        </button>
+      </div>
     </div>
 
   </div>

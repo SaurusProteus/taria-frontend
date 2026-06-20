@@ -76,8 +76,8 @@ a{color:inherit}
   .auth-tl{max-width:360px;top:44px;left:40px}
   .auth-headline{font-size:2rem}
 }
-/* Solo en ventanas MUY bajas se oculta (evita choque con el texto) */
-@media(max-height:620px){
+/* En pantallas de poca altura se oculta para no tapar el texto */
+@media(max-height:780px){
   .auth-bl{display:none}
 }
 

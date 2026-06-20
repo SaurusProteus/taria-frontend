@@ -77,6 +77,62 @@ async function cargarAdmin(){
   }
 }
 
+/* ── TOUR DE BIENVENIDA (primera vez) ── */
+const TOUR_STEPS = [
+  {sel:null, title:'¡Bienvenido a Tar-IA! 👋', text:'Te muestro en 30 segundos cómo funciona. Puedes saltarte esto cuando quieras.'},
+  {sel:'.side-link[data-view="calificar"]', title:'1 · Califica tareas', text:'Sube la clave de respuestas y los PDFs de tus alumnos. Tar-IA los revisa y te devuelve un ZIP con cada tarea anotada y un resumen del grupo.'},
+  {sel:'#user-creditos', title:'2 · Tus créditos', text:'Cada tarea revisada consume un crédito. Empiezas con 3 gratis para probar el sistema.'},
+  {sel:'.side-link[data-view="historial"]', title:'3 · Historial', text:'Consulta todas las tareas que has calificado, con su fecha y calificación.'},
+  {sel:'.side-link[data-view="plan"]', title:'4 · Mi plan', text:'Compra más créditos o mejora tu plan cuando lo necesites.'},
+  {sel:'.side-link[data-view="cuenta"]', title:'5 · Mi cuenta', text:'Tus datos, privacidad y documentos legales. Aquí también puedes dar de baja tu cuenta.'},
+];
+
+function iniciarTour(){
+  if(localStorage.getItem('taria_tour_done')) return;
+  let i = 0, highlighted = null;
+  const ov = document.createElement('div'); ov.className = 'tour-overlay';
+  const tip = document.createElement('div'); tip.className = 'tour-tip';
+  document.body.appendChild(ov); document.body.appendChild(tip);
+
+  function clearHi(){ if(highlighted){ highlighted.classList.remove('tour-highlight'); highlighted = null; } }
+  function finish(){ clearHi(); ov.remove(); tip.remove(); localStorage.setItem('taria_tour_done','1'); }
+
+  function render(){
+    const step = TOUR_STEPS[i];
+    clearHi();
+    const target = step.sel ? document.querySelector(step.sel) : null;
+    ov.style.display = target ? 'none' : 'block';
+    if(target){ target.classList.add('tour-highlight'); highlighted = target; }
+
+    tip.innerHTML = `
+      <div class="tour-title">${step.title}</div>
+      <div class="tour-text">${step.text}</div>
+      <div class="tour-actions">
+        <button class="tour-skip">Saltar</button>
+        <button class="tour-next">${i === TOUR_STEPS.length-1 ? '¡Listo!' : 'Siguiente'}</button>
+      </div>
+      <div class="tour-progress">${i+1} / ${TOUR_STEPS.length}</div>`;
+    tip.querySelector('.tour-next').onclick = ()=>{ i++; (i >= TOUR_STEPS.length) ? finish() : render(); };
+    tip.querySelector('.tour-skip').onclick = finish;
+
+    // Posicionar el tooltip
+    if(!target){
+      tip.style.left = '50%'; tip.style.top = '50%'; tip.style.transform = 'translate(-50%,-50%)';
+    } else {
+      tip.style.transform = 'none';
+      const r = target.getBoundingClientRect();
+      const tw = 300, th = tip.offsetHeight || 170;
+      let left, top;
+      if(r.top < 80){ left = Math.min(r.left, window.innerWidth - tw - 14); top = r.bottom + 14; } // topbar → abajo
+      else { left = r.right + 16; top = r.top; }                                                    // sidebar → derecha
+      if(left + tw > window.innerWidth - 12) left = Math.max(12, r.left - tw - 16);
+      if(top + th > window.innerHeight - 12) top = Math.max(12, window.innerHeight - th - 12);
+      tip.style.left = left + 'px'; tip.style.top = top + 'px';
+    }
+  }
+  render();
+}
+
 /* ── MI CUENTA ── */
 function cargarCuenta(){
   if(!currentUser) return;
@@ -148,6 +204,7 @@ function mostrarModalConsent(pendingDocs){
     try{
       await apiPost('/legal/consent', { doc_ids: pendingDocs.map(d => d.id) });
       modal.style.display = 'none';
+      iniciarTour();
     }catch(e){
       btn.disabled = false;
       btn.textContent = 'Acepto y continuar';
@@ -169,6 +226,8 @@ async function cargarUsuario(){
     }
     if(currentUser.needs_consent && currentUser.pending_docs?.length > 0){
       mostrarModalConsent(currentUser.pending_docs);
+    } else {
+      iniciarTour();
     }
   }catch(e){
     console.error(e);

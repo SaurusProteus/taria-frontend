@@ -63,6 +63,20 @@
         Continuar con Google
       </a>
 
+      <div class="login-or"><span>o con tu correo</span></div>
+
+      <form id="email-form" autocomplete="on">
+        <input type="text" id="f-name" class="login-input" placeholder="Tu nombre" style="display:none">
+        <input type="email" id="f-email" class="login-input" placeholder="correo@ejemplo.com" autocomplete="email" required>
+        <input type="password" id="f-pass" class="login-input" placeholder="Contraseña" autocomplete="current-password" required>
+        <button type="submit" id="f-submit" class="btn-email">Iniciar sesión</button>
+      </form>
+
+      <div class="login-switch">
+        <span id="switch-text">¿No tienes cuenta?</span>
+        <a href="#" id="switch-link">Crea una</a>
+      </div>
+
       <div class="login-foot">Al continuar aceptas el uso responsable del servicio.<br>¿Problemas para entrar? <a href="https://wa.me/524464036213" target="_blank">Escríbenos</a></div>
     </div>
   </div>
@@ -86,6 +100,56 @@
     document.getElementById('error-box').innerHTML =
       `<div class="alert alert-error" style="margin-bottom:24px;text-align:left">No pudimos iniciar sesión: ${msg}</div>`;
   }
+
+  // ── Login / Registro con correo y contraseña ──
+  const PANEL = (window.location.pathname.startsWith('/taria-frontend') ? '/taria-frontend' : '') + '/panel.html';
+  let modoRegistro = false;
+  const fName = document.getElementById('f-name');
+  const fPass = document.getElementById('f-pass');
+  const fSubmit = document.getElementById('f-submit');
+  const switchText = document.getElementById('switch-text');
+  const switchLink = document.getElementById('switch-link');
+  const errorBox = document.getElementById('error-box');
+
+  function setModo(reg){
+    modoRegistro = reg;
+    fName.style.display = reg ? 'block' : 'none';
+    fName.required = reg;
+    fSubmit.textContent = reg ? 'Crear cuenta' : 'Iniciar sesión';
+    fPass.setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
+    switchText.textContent = reg ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
+    switchLink.textContent = reg ? 'Inicia sesión' : 'Crea una';
+    errorBox.innerHTML = '';
+  }
+  switchLink.addEventListener('click', e => { e.preventDefault(); setModo(!modoRegistro); });
+
+  document.getElementById('email-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    errorBox.innerHTML = '';
+    const body = {
+      email: document.getElementById('f-email').value.trim(),
+      password: fPass.value,
+    };
+    if(modoRegistro) body.name = fName.value.trim();
+
+    fSubmit.disabled = true;
+    fSubmit.textContent = modoRegistro ? 'Creando…' : 'Entrando…';
+    try{
+      const r = await fetch(`${API_URL}${modoRegistro ? '/auth/register' : '/auth/login'}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await r.json();
+      if(!r.ok) throw new Error(data.detail || 'No se pudo completar la operación');
+      setToken(data.token);
+      window.location.href = PANEL;
+    }catch(err){
+      errorBox.innerHTML = `<div class="alert alert-error" style="margin-bottom:20px;text-align:left">${err.message}</div>`;
+      fSubmit.disabled = false;
+      fSubmit.textContent = modoRegistro ? 'Crear cuenta' : 'Iniciar sesión';
+    }
+  });
 </script>
 </body>
 </html>

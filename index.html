@@ -9,22 +9,31 @@
 </head>
 <body>
 
-<div class="auth-page">
+<div class="auth-stage">
 
-  <!-- IZQUIERDA: propuesta de valor + mockup -->
-  <div class="auth-pitch">
+  <!-- Ilustración central (fondo) -->
+  <div class="auth-hero">
+    <img src="./img/img_login.png" alt="Un docente relajado mientras Tar-IA califica las tareas" class="auth-hero-img">
+    <span class="steam s1"></span><span class="steam s2"></span><span class="steam s3"></span>
+  </div>
+
+  <!-- Esquina superior izquierda: propuesta de valor -->
+  <div class="auth-tl">
     <div class="auth-brand">Tar-IA <span>by Enginerd</span></div>
     <h1 class="auth-headline">Califica un grupo entero<br>en lo que te tomas un café.</h1>
     <p class="auth-lede">
       Sube la clave de respuestas y las tareas de tus alumnos. Tar-IA revisa cada una
-      y te regresa los PDFs anotados, con calificación y observaciones página por página.
+      y te regresa los PDFs anotados, con calificación y observaciones.
     </p>
     <ul class="auth-points">
       <li>Anotaciones listas para entregar</li>
       <li>Detecta posibles errores en tu propia clave</li>
       <li>Tú revisas y decides — la IA solo te adelanta el trabajo</li>
     </ul>
+  </div>
 
+  <!-- Esquina inferior izquierda: tarjeta de ejemplo -->
+  <div class="auth-bl">
     <div class="mock-sheet" aria-hidden="true">
       <div class="mock-head">
         <div class="mock-grade">9.2</div>
@@ -41,9 +50,8 @@
     </div>
   </div>
 
-  <!-- DERECHA: imagen + login -->
-  <div class="auth-login">
-    <img src="./img/img_login.png" alt="Un docente relajado mientras Tar-IA califica las tareas" class="auth-img">
+  <!-- Esquina inferior derecha: login -->
+  <div class="auth-br">
     <div class="login-card">
       <div class="login-logo">Tar-IA</div>
       <div class="login-tag">Entra con tu cuenta de Google para empezar</div>

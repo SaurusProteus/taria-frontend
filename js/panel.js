@@ -240,6 +240,7 @@ async function cargarUsuario(){
     if(currentUser.plan === 'owner'){
       document.getElementById('side-admin').style.display = 'flex';
     }
+    actualizarCreditosAviso();
     if(currentUser.needs_consent && currentUser.pending_docs?.length > 0){
       mostrarModalConsent(currentUser.pending_docs);
     } else {
@@ -305,6 +306,20 @@ function renderTareasList(){
       renderTareasList();
     });
   });
+  actualizarCreditosAviso();
+}
+
+function actualizarCreditosAviso(){
+  const el = document.getElementById('creditos-aviso');
+  const n = tareasFiles.length;
+  if(n === 0 || (currentUser && currentUser.plan === 'owner')){ el.style.display = 'none'; return; }
+  const disponibles = currentUser ? currentUser.revisiones_restantes : 0;
+  const alcanza = disponibles >= n;
+  el.style.display = 'block';
+  el.innerHTML = `
+    <span class="cred-num">${n}</span> crédito${n!==1?'s':''} se consumirán en esta revisión
+    <span class="cred-sub">(1 por tarea · te quedan ${disponibles})</span>
+    ${alcanza ? '' : `<div class="cred-warn">No te alcanza: faltan ${n - disponibles}. Quita archivos o compra más en "Mi plan".</div>`}`;
 }
 
 /* ── ENVIAR A CALIFICAR ── */

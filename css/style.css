@@ -150,6 +150,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .btn-secondary{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--text);font-size:14px;font-weight:500;padding:13px 24px;border-radius:9px;border:0.5px solid var(--border2);cursor:pointer;transition:border-color .2s,color .2s}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
 
+/* ── AVISO DE CRÉDITOS ── */
+.creditos-aviso{background:rgba(200,242,48,.07);border:0.5px solid rgba(200,242,48,.3);border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text2)}
+.creditos-aviso .cred-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);font-size:15px}
+.creditos-aviso .cred-sub{color:var(--text3);font-size:12px;margin-left:4px}
+.creditos-aviso .cred-warn{margin-top:8px;color:#ff8a8a;font-size:12px}
+
 /* ── ALERT ── */
 .alert{padding:14px 16px;border-radius:9px;font-size:13px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start}
 .alert-error{background:rgba(255,93,93,.08);border:0.5px solid rgba(255,93,93,.3);color:#ff8a8a}

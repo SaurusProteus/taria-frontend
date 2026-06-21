@@ -68,6 +68,10 @@
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Mi cuenta
     </button>
+    <button class="side-link" data-view="ayuda" id="side-ayuda" style="display:none">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Cómo usar
+    </button>
     <button class="side-link side-link-admin" data-view="admin" id="side-admin" style="display:none">
       <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>
       Admin
@@ -287,6 +291,86 @@
           <thead><tr><th>Nombre</th><th>Correo</th><th>Plan</th><th>Créditos</th><th>Registro</th></tr></thead>
           <tbody id="admin-usuarios"><tr><td colspan="5" style="text-align:center;color:var(--text3)">Cargando…</td></tr></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- VISTA: CÓMO USAR -->
+    <div class="view" id="view-ayuda">
+      <div class="view-title">Cómo usar Tar-IA</div>
+      <div class="view-sub">Una guía rápida para sacarle el máximo provecho y obtener revisiones precisas.</div>
+
+      <div class="howto-step">
+        <div class="howto-n">1</div>
+        <div>
+          <h3>Prepara tu clave de respuestas</h3>
+          <p>Sube <strong>un PDF</strong> con las respuestas correctas. Por cada problema debe incluir:</p>
+          <ul>
+            <li><strong>Número o inciso</strong> (1, 2a, 3-b…)</li>
+            <li><strong>Resultado correcto</strong></li>
+            <li><strong>Puntos que vale</strong> cada problema</li>
+          </ul>
+          <p class="howto-tip">Si no indicas puntos, se reparten por igual. Incluir el enunciado y los pasos de la solución mejora el crédito parcial. Puede ser a mano o digital, pero legible.</p>
+        </div>
+      </div>
+
+      <div class="howto-step">
+        <div class="howto-n">2</div>
+        <div>
+          <h3>Sube las tareas de tus alumnos</h3>
+          <p>Un PDF por alumno. La calidad de las fotos define la precisión de la revisión:</p>
+          <div class="howto-grid">
+            <div class="howto-card good">
+              <div class="howto-card-h">✓ Buen ejemplo</div>
+              <ul>
+                <li>Respuestas numeradas (1a, 1b, 2…)</li>
+                <li>Un problema tras otro, en orden</li>
+                <li>Letra legible y buena iluminación</li>
+                <li>Resultado final resaltado o encerrado</li>
+                <li>Páginas derechas, un solo PDF</li>
+              </ul>
+            </div>
+            <div class="howto-card bad">
+              <div class="howto-card-h">✗ Mal ejemplo</div>
+              <ul>
+                <li>Sin numerar, respuestas mezcladas</li>
+                <li>Varias fotos amontonadas en una hoja</li>
+                <li>Letra borrosa, foto oscura o movida</li>
+                <li>No se distingue el resultado final</li>
+                <li>Páginas giradas o de cabeza</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto-step">
+        <div class="howto-n">3</div>
+        <div>
+          <h3>Agrega instrucciones (opcional)</h3>
+          <p>Indica tus criterios para que califique a tu manera:</p>
+          <ul>
+            <li>"Acepta resultados equivalentes (fracción o decimal)"</li>
+            <li>"La gráfica puede ser a mano"</li>
+            <li>"Da medio punto por procedimiento correcto"</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="howto-step">
+        <div class="howto-n">4</div>
+        <div>
+          <h3>Revisa lo que recibes</h3>
+          <p>Tar-IA te devuelve un <strong>ZIP</strong> con:</p>
+          <ul>
+            <li><strong>Resumen del docente</strong> — promedio del grupo, lista de calificaciones y notas privadas.</li>
+            <li><strong>Una hoja por alumno</strong> — calificación, detalle por problema y una barra lateral con ✓ / ½ / ✗.</li>
+          </ul>
+          <p class="howto-tip">Las calificaciones son generadas por IA y pueden tener errores. Revísalas antes de considerarlas definitivas.</p>
+        </div>
+      </div>
+
+      <div class="howto-cta">
+        ¿Lista tu clave y tus tareas? <a href="#" id="howto-ir-calificar">Ir a calificar →</a>
       </div>
     </div>
 

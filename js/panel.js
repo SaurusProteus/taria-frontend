@@ -20,6 +20,9 @@ let claveFile = null;
 let tareasFiles = [];
 let currentUser = null;
 
+// Interruptor: ponlo en true cuando la guía esté lista para todos los usuarios
+const AYUDA_PARA_TODOS = false;
+
 /* ── NAVEGACIÓN ENTRE VISTAS ── */
 document.querySelectorAll('.side-link').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -181,6 +184,11 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
   }
 });
 
+document.getElementById('howto-ir-calificar').addEventListener('click', (e)=>{
+  e.preventDefault();
+  document.querySelector('.side-link[data-view="calificar"]').click();
+});
+
 document.getElementById('btn-reenviar-verif').addEventListener('click', async (e)=>{
   const btn = e.target;
   btn.disabled = true; btn.textContent = 'Enviando…';
@@ -250,6 +258,10 @@ async function cargarUsuario(){
     document.getElementById('user-creditos').textContent = currentUser.revisiones_restantes + ' créditos';
     if(currentUser.plan === 'owner'){
       document.getElementById('side-admin').style.display = 'flex';
+    }
+    // "Cómo usar": por ahora solo el dueño la ve (cambia AYUDA_PARA_TODOS a true para liberarla)
+    if(currentUser.plan === 'owner' || AYUDA_PARA_TODOS){
+      document.getElementById('side-ayuda').style.display = 'flex';
     }
     if(currentUser.email_verified === false && currentUser.plan !== 'owner'){
       document.getElementById('verify-banner').style.display = 'flex';

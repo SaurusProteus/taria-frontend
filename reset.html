@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restablecer contraseña — Tar-IA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230b0d10'/><text y='.9em' font-size='72' x='14' fill='%23c8f230' font-family='monospace' font-weight='bold'>T</text></svg>">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-glow"></div>
+  <div class="login-card">
+    <div class="login-logo">Tar-IA</div>
+    <div class="login-tag">Crea tu nueva contraseña</div>
+
+    <div id="error-box"></div>
+
+    <form id="reset-form">
+      <input type="password" id="r-pass" class="login-input" placeholder="Nueva contraseña (mín. 8)" autocomplete="new-password" required>
+      <input type="password" id="r-pass2" class="login-input" placeholder="Repite la contraseña" autocomplete="new-password" required>
+      <button type="submit" id="r-submit" class="btn-email">Guardar contraseña</button>
+    </form>
+
+    <div class="login-switch"><a href="./index.html">← Volver a iniciar sesión</a></div>
+  </div>
+</div>
+
+<script src="./js/api.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const errorBox = document.getElementById('error-box');
+  const submit = document.getElementById('r-submit');
+
+  if(!token){
+    errorBox.innerHTML = '<div class="alert alert-error" style="margin-bottom:20px;text-align:left">Enlace inválido. Solicita uno nuevo desde la pantalla de inicio.</div>';
+    document.getElementById('reset-form').style.display = 'none';
+  }
+
+  document.getElementById('reset-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    errorBox.innerHTML = '';
+    const p1 = document.getElementById('r-pass').value;
+    const p2 = document.getElementById('r-pass2').value;
+    if(p1.length < 8){
+      errorBox.innerHTML = '<div class="alert alert-error" style="margin-bottom:20px;text-align:left">La contraseña debe tener al menos 8 caracteres.</div>';
+      return;
+    }
+    if(p1 !== p2){
+      errorBox.innerHTML = '<div class="alert alert-error" style="margin-bottom:20px;text-align:left">Las contraseñas no coinciden.</div>';
+      return;
+    }
+    submit.disabled = true; submit.textContent = 'Guardando…';
+    try{
+      const r = await fetch(`${API_URL}/auth/reset-password`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ token, password: p1 })
+      });
+      const data = await r.json().catch(() => ({}));
+      if(!r.ok) throw new Error(data.detail || 'No se pudo restablecer la contraseña');
+      errorBox.innerHTML = '<div class="alert alert-success" style="margin-bottom:20px;text-align:left">¡Listo! Tu contraseña fue actualizada. Ya puedes iniciar sesión.</div>';
+      document.getElementById('reset-form').style.display = 'none';
+    }catch(err){
+      let m = err.message;
+      if(m === 'Failed to fetch' || err instanceof TypeError){
+        m = 'No pudimos conectar con el servidor. Inténtalo de nuevo.';
+      }
+      errorBox.innerHTML = `<div class="alert alert-error" style="margin-bottom:20px;text-align:left">${m}</div>`;
+      submit.disabled = false; submit.textContent = 'Guardar contraseña';
+    }
+  });
+</script>
+</body>
+</html>

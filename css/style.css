@@ -109,6 +109,9 @@ a{color:inherit}
 .btn-email{width:100%;background:var(--accent);color:#0b0d10;font-size:14px;font-weight:600;padding:12px 20px;border-radius:9px;border:none;cursor:pointer;transition:background .2s;margin-top:2px}
 .btn-email:hover{background:var(--accent2)}
 .btn-email:disabled{opacity:.55;cursor:not-allowed}
+.login-forgot{margin-top:12px;font-size:12px;text-align:center}
+.login-forgot a{color:var(--text3);text-decoration:none}
+.login-forgot a:hover{color:var(--accent)}
 .login-switch{margin-top:16px;font-size:13px;color:var(--text3)}
 .login-switch a{color:var(--accent);text-decoration:none;margin-left:5px}
 .login-foot{margin-top:24px;font-size:12px;color:var(--text3)}

@@ -72,6 +72,8 @@
         <button type="submit" id="f-submit" class="btn-email">Iniciar sesión</button>
       </form>
 
+      <div class="login-forgot" id="forgot-wrap"><a href="#" id="forgot-link">¿Olvidaste tu contraseña?</a></div>
+
       <div class="login-switch">
         <span id="switch-text">¿No tienes cuenta?</span>
         <a href="#" id="switch-link">Crea una</a>
@@ -101,43 +103,59 @@
       `<div class="alert alert-error" style="margin-bottom:24px;text-align:left">No pudimos iniciar sesión: ${msg}</div>`;
   }
 
-  // ── Login / Registro con correo y contraseña ──
+  // ── Login / Registro / Recuperación con correo ──
   const PANEL = (window.location.pathname.startsWith('/taria-frontend') ? '/taria-frontend' : '') + '/panel.html';
-  let modoRegistro = false;
+  let modo = 'login'; // 'login' | 'register' | 'forgot'
   const fName = document.getElementById('f-name');
   const fPass = document.getElementById('f-pass');
   const fSubmit = document.getElementById('f-submit');
   const switchText = document.getElementById('switch-text');
   const switchLink = document.getElementById('switch-link');
+  const forgotWrap = document.getElementById('forgot-wrap');
   const errorBox = document.getElementById('error-box');
 
-  function setModo(reg){
-    modoRegistro = reg;
-    fName.style.display = reg ? 'block' : 'none';
-    fName.required = reg;
-    fSubmit.textContent = reg ? 'Crear cuenta' : 'Iniciar sesión';
-    fPass.setAttribute('autocomplete', reg ? 'new-password' : 'current-password');
-    switchText.textContent = reg ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
-    switchLink.textContent = reg ? 'Inicia sesión' : 'Crea una';
+  const LABELS = {
+    login:    { submit:'Iniciar sesión', busy:'Entrando…' },
+    register: { submit:'Crear cuenta',   busy:'Creando…' },
+    forgot:   { submit:'Enviar enlace',  busy:'Enviando…' },
+  };
+
+  function setModo(m){
+    modo = m;
+    fName.style.display = (m === 'register') ? 'block' : 'none';
+    fName.required = (m === 'register');
+    fPass.style.display = (m === 'forgot') ? 'none' : 'block';
+    fPass.required = (m !== 'forgot');
+    fPass.setAttribute('autocomplete', m === 'register' ? 'new-password' : 'current-password');
+    fSubmit.textContent = LABELS[m].submit;
+    forgotWrap.style.display = (m === 'login') ? 'block' : 'none';
+    switchText.textContent = (m === 'register') ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?';
+    switchLink.textContent = (m === 'register') ? 'Inicia sesión' : 'Crea una';
     errorBox.innerHTML = '';
   }
-  switchLink.addEventListener('click', e => { e.preventDefault(); setModo(!modoRegistro); });
+  switchLink.addEventListener('click', e => { e.preventDefault(); setModo(modo === 'register' ? 'login' : 'register'); });
+  document.getElementById('forgot-link').addEventListener('click', e => { e.preventDefault(); setModo('forgot'); });
 
   document.getElementById('email-form').addEventListener('submit', async e => {
     e.preventDefault();
     errorBox.innerHTML = '';
-    const body = {
-      email: document.getElementById('f-email').value.trim(),
-      password: fPass.value,
-    };
-    if(modoRegistro) body.name = fName.value.trim();
-
+    const email = document.getElementById('f-email').value.trim();
     fSubmit.disabled = true;
-    fSubmit.textContent = modoRegistro ? 'Creando…' : 'Entrando…';
+    fSubmit.textContent = LABELS[modo].busy;
     try{
-      const r = await fetch(`${API_URL}${modoRegistro ? '/auth/register' : '/auth/login'}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      if(modo === 'forgot'){
+        await fetch(`${API_URL}/auth/forgot-password`, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email })
+        });
+        errorBox.innerHTML = `<div class="alert alert-success" style="margin-bottom:20px;text-align:left">Si existe una cuenta con ese correo, te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja (y spam).</div>`;
+        fSubmit.disabled = false; fSubmit.textContent = LABELS[modo].submit;
+        return;
+      }
+      const body = { email, password: fPass.value };
+      if(modo === 'register') body.name = fName.value.trim();
+      const r = await fetch(`${API_URL}${modo === 'register' ? '/auth/register' : '/auth/login'}`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify(body),
       });
       const data = await r.json().catch(() => ({}));
@@ -151,7 +169,7 @@
       }
       errorBox.innerHTML = `<div class="alert alert-error" style="margin-bottom:20px;text-align:left">${m}</div>`;
       fSubmit.disabled = false;
-      fSubmit.textContent = modoRegistro ? 'Crear cuenta' : 'Iniciar sesión';
+      fSubmit.textContent = LABELS[modo].submit;
     }
   });
 </script>

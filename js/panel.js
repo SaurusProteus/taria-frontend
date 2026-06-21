@@ -1,5 +1,21 @@
 requireAuth();
 
+/* ── Cierre de sesión por inactividad (2 horas) ── */
+(function(){
+  const LIMITE = 2 * 60 * 60 * 1000; // 2 horas
+  let timer;
+  function reset(){
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      clearToken();
+      window.location.href = BASE + '/index.html?msg=Tu sesión se cerró por seguridad tras un periodo de inactividad';
+    }, LIMITE);
+  }
+  ['mousemove','keydown','click','scroll','touchstart'].forEach(ev =>
+    document.addEventListener(ev, reset, { passive: true }));
+  reset();
+})();
+
 let claveFile = null;
 let tareasFiles = [];
 let currentUser = null;

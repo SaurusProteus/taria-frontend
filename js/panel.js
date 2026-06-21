@@ -181,6 +181,17 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
   }
 });
 
+document.getElementById('btn-reenviar-verif').addEventListener('click', async (e)=>{
+  const btn = e.target;
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  try{
+    await apiPost('/auth/resend-verification');
+    btn.textContent = '✓ Enviado, revisa tu correo';
+  }catch(err){
+    btn.disabled = false; btn.textContent = 'Reenviar correo';
+  }
+});
+
 document.getElementById('btn-logout').addEventListener('click', ()=>{
   clearToken();
   window.location.href = BASE + '/index.html';
@@ -239,6 +250,9 @@ async function cargarUsuario(){
     document.getElementById('user-creditos').textContent = currentUser.revisiones_restantes + ' créditos';
     if(currentUser.plan === 'owner'){
       document.getElementById('side-admin').style.display = 'flex';
+    }
+    if(currentUser.email_verified === false && currentUser.plan !== 'owner'){
+      document.getElementById('verify-banner').style.display = 'flex';
     }
     actualizarCreditosAviso();
     if(currentUser.needs_consent && currentUser.pending_docs?.length > 0){
@@ -377,10 +391,11 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
       body: formData
     });
 
-    if(res.status === 401){ clearToken(); window.location.href = '/index.html'; return; }
-    if(res.status === 402){
-      const data = await res.json();
-      alertBox.innerHTML = `<div class="alert alert-error">${data.detail.message}</div>`;
+    if(res.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+    if(res.status === 402 || res.status === 403 || res.status === 400){
+      const data = await res.json().catch(() => ({}));
+      const m = (data.detail && data.detail.message) ? data.detail.message : (data.detail || 'No se pudo procesar la solicitud');
+      alertBox.innerHTML = `<div class="alert alert-error">${m}</div>`;
       return;
     }
     if(!res.ok) throw new Error(`Error ${res.status}`);

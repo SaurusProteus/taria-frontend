@@ -150,6 +150,12 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .btn-secondary{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--text);font-size:14px;font-weight:500;padding:13px 24px;border-radius:9px;border:0.5px solid var(--border2);cursor:pointer;transition:border-color .2s,color .2s}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
 
+/* ── BANNER VERIFICACIÓN DE CORREO ── */
+#verify-banner{display:flex;align-items:center;gap:10px;background:rgba(245,176,96,.12);border-bottom:0.5px solid rgba(245,176,96,.35);color:#f5b060;font-size:13px;padding:11px 24px}
+#verify-banner svg{flex-shrink:0}
+#verify-banner button{margin-left:auto;background:#f5b060;color:#0b0d10;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+#verify-banner button:disabled{opacity:.6;cursor:default}
+
 /* ── AVISO DE CRÉDITOS ── */
 .creditos-aviso{background:rgba(200,242,48,.07);border:0.5px solid rgba(200,242,48,.3);border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text2)}
 .creditos-aviso .cred-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);font-size:15px}

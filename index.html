@@ -102,6 +102,10 @@
     document.getElementById('error-box').innerHTML =
       `<div class="alert alert-error" style="margin-bottom:24px;text-align:left">No pudimos iniciar sesión: ${msg}</div>`;
   }
+  if(params.get('verified') === '1'){
+    document.getElementById('error-box').innerHTML =
+      `<div class="alert alert-success" style="margin-bottom:24px;text-align:left">✓ ¡Correo verificado! Ya puedes iniciar sesión y calificar.</div>`;
+  }
 
   // ── Login / Registro / Recuperación con correo ──
   const PANEL = (window.location.pathname.startsWith('/taria-frontend') ? '/taria-frontend' : '') + '/panel.html';

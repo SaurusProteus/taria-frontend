@@ -252,6 +252,17 @@
 
       <div id="admin-alert"></div>
 
+      <!-- Gestión de usuario y créditos -->
+      <div class="card" style="margin-bottom:24px">
+        <h3 style="font-size:15px;margin-bottom:6px">Gestión de usuario y créditos</h3>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Busca un usuario por correo para ver su saldo, su historial de créditos y darle revisiones de cortesía.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <input type="email" id="admin-buscar-email" class="login-input" placeholder="correo@ejemplo.com" style="flex:1;min-width:220px;margin:0">
+          <button class="btn-primary" id="admin-buscar-btn" style="white-space:nowrap">Buscar</button>
+        </div>
+        <div id="admin-user-result" style="margin-top:18px"></div>
+      </div>
+
       <!-- KPIs principales -->
       <div class="kpi-grid">
         <div class="kpi-card kpi-accent">

@@ -41,6 +41,74 @@ document.querySelectorAll('.side-link').forEach(btn=>{
 const fmtMXN = n => '$' + Number(n||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtFecha = s => s ? new Date(s).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'}) : '—';
 
+/* ── Admin: gestión de usuario y créditos ── */
+const MOTIVOS = { signup:'Registro', compra:'Compra', calificacion:'Calificación', regalo:'Regalo', ajuste:'Ajuste' };
+
+async function buscarUsuarioAdmin(){
+  const email = document.getElementById('admin-buscar-email').value.trim();
+  const cont = document.getElementById('admin-user-result');
+  if(!email){ return; }
+  cont.innerHTML = '<div style="color:var(--text3);font-size:13px">Buscando…</div>';
+  try{
+    const d = await apiGet('/admin/usuario?email=' + encodeURIComponent(email));
+    const u = d.usuario;
+    const eventos = d.eventos || [];
+    const filas = eventos.length ? eventos.map(e=>`
+      <tr>
+        <td>${MOTIVOS[e.motivo] || e.motivo}</td>
+        <td style="color:${e.delta>=0?'var(--success)':'#ff8a8a'};font-family:'Space Mono',monospace">${e.delta>=0?'+':''}${e.delta}</td>
+        <td style="font-size:12px;color:var(--text3)">${e.archivos ?? '—'}</td>
+        <td style="font-size:12px;color:var(--text2)">${e.nota || '—'}</td>
+        <td style="font-size:12px;color:var(--text3)">${fmtFecha(e.created_at)}</td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text3)">Sin movimientos.</td></tr>';
+
+    cont.innerHTML = `
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+        <div><div style="font-size:12px;color:var(--text3)">Usuario</div><div style="font-weight:600">${u.name||'—'}</div><div style="font-size:12px;color:var(--text3)">${u.email}</div></div>
+        <div><div style="font-size:12px;color:var(--text3)">Plan</div><div><span class="badge ${u.plan==='gratis'?'badge-pending':'badge-ok'}">${(u.plan||'').toUpperCase()}</span></div></div>
+        <div><div style="font-size:12px;color:var(--text3)">Saldo</div><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--accent)">${u.revisiones_restantes}</div></div>
+      </div>
+
+      <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:14px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:600;margin-bottom:8px">Regalar revisiones de cortesía</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input type="number" id="regalo-cantidad" class="login-input" placeholder="Cantidad" min="1" style="width:110px;margin:0">
+          <input type="text" id="regalo-nota" class="login-input" placeholder="Motivo (ej. compensación por error)" style="flex:1;min-width:200px;margin:0">
+          <button class="btn-secondary" id="regalo-btn" data-email="${u.email}" style="white-space:nowrap">Acreditar</button>
+        </div>
+        <div id="regalo-msg" style="margin-top:10px"></div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Movimiento</th><th>Créditos</th><th>Archivos</th><th>Nota</th><th>Fecha</th></tr></thead>
+          <tbody>${filas}</tbody>
+        </table>
+      </div>`;
+
+    document.getElementById('regalo-btn').addEventListener('click', regalarCreditos);
+  }catch(e){
+    cont.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  }
+}
+
+async function regalarCreditos(e){
+  const email = e.target.dataset.email;
+  const cantidad = parseInt(document.getElementById('regalo-cantidad').value, 10);
+  const nota = document.getElementById('regalo-nota').value.trim();
+  const msg = document.getElementById('regalo-msg');
+  if(!cantidad || cantidad <= 0){ msg.innerHTML = '<div class="alert alert-error">Pon una cantidad válida.</div>'; return; }
+  e.target.disabled = true; e.target.textContent = 'Acreditando…';
+  try{
+    const r = await apiPost('/admin/regalar-creditos', { email, cantidad, nota });
+    msg.innerHTML = `<div class="alert alert-success">✓ Acreditadas ${cantidad} revisiones. Nuevo saldo: ${r.revisiones_restantes}. Se notificó por correo.</div>`;
+    buscarUsuarioAdmin(); // refrescar historial
+  }catch(err){
+    msg.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+    e.target.disabled = false; e.target.textContent = 'Acreditar';
+  }
+}
+
 async function cargarAdmin(){
   const alert = document.getElementById('admin-alert');
   alert.innerHTML = '';
@@ -183,6 +251,10 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
     btn.textContent = 'Eliminar mi cuenta';
   }
 });
+
+/* ── Admin: buscar usuario ── */
+document.getElementById('admin-buscar-btn').addEventListener('click', buscarUsuarioAdmin);
+document.getElementById('admin-buscar-email').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); buscarUsuarioAdmin(); } });
 
 /* ── Modal de fotos sin nombre ── */
 document.getElementById('fotos-continuar').addEventListener('click', ()=>{

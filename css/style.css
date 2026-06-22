@@ -163,9 +163,19 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .modal-actions button{flex:1}
 
 /* ── CÓMO USAR ── */
-.howto-step{display:flex;gap:18px;background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:24px 26px;margin-bottom:18px}
+.howto-step{display:flex;gap:28px;align-items:center;background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:24px 26px;margin-bottom:18px}
+.howto-step.reverse{flex-direction:row-reverse}
+.howto-body{flex:1;min-width:0}
+.howto-media{flex:0 0 40%;max-width:40%}
+.howto-media img{width:100%;border-radius:10px;border:0.5px solid var(--border2);display:block}
+.howto-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.howto-head h3{margin:0}
 .howto-n{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#0b0d10;font-family:'Space Mono',monospace;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:16px}
 .howto-step h3{font-size:16px;margin-bottom:8px}
+@media(max-width:760px){
+  .howto-step,.howto-step.reverse{flex-direction:column;align-items:stretch}
+  .howto-media{max-width:100%;flex:none;margin-top:6px}
+}
 .howto-step p{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:8px}
 .howto-step ul{margin:0 0 8px;padding-left:20px}
 .howto-step li{font-size:13.5px;color:var(--text2);line-height:1.7}

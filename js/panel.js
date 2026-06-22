@@ -184,6 +184,17 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
   }
 });
 
+/* ── Disclaimer de IA cerrable (recuerda el cierre) ── */
+(function(){
+  const disc = document.getElementById('ai-disclaimer');
+  if(!disc) return;
+  if(localStorage.getItem('taria_aidisc_cerrado')) disc.style.display = 'none';
+  document.getElementById('ai-disclaimer-close').addEventListener('click', ()=>{
+    disc.style.display = 'none';
+    localStorage.setItem('taria_aidisc_cerrado', '1');
+  });
+})();
+
 document.getElementById('howto-ir-calificar').addEventListener('click', (e)=>{
   e.preventDefault();
   document.querySelector('.side-link[data-view="calificar"]').click();
@@ -315,7 +326,8 @@ inputTareas.addEventListener('change', e=>{
 });
 
 function agregarTareas(files){
-  tareasFiles = tareasFiles.concat(files.filter(f=>f.type === 'application/pdf'));
+  const permitidos = ['application/pdf','image/jpeg','image/png'];
+  tareasFiles = tareasFiles.concat(files.filter(f=>permitidos.includes(f.type)));
   renderTareasList();
 }
 
@@ -335,9 +347,22 @@ function renderTareasList(){
   actualizarCreditosAviso();
 }
 
+function contarTareas(files){
+  // PDFs = 1 c/u; imágenes se agrupan por nombre base (mismo alumno) = 1 tarea
+  let pdfs = 0; const bases = new Set();
+  files.forEach(f=>{
+    if(f.type === 'application/pdf') pdfs++;
+    else {
+      const base = f.name.replace(/\.[^.]+$/,'').replace(/[\s_\-]*\d+$/,'').trim();
+      bases.add(base || f.name);
+    }
+  });
+  return pdfs + bases.size;
+}
+
 function actualizarCreditosAviso(){
   const el = document.getElementById('creditos-aviso');
-  const n = tareasFiles.length;
+  const n = contarTareas(tareasFiles);
   if(n === 0 || (currentUser && currentUser.plan === 'owner')){ el.style.display = 'none'; return; }
   const disponibles = currentUser ? currentUser.revisiones_restantes : 0;
   const alcanza = disponibles >= n;
@@ -361,11 +386,12 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     alertBox.innerHTML = '<div class="alert alert-error">Sube al menos una tarea de alumno.</div>';
     return;
   }
-  if(currentUser && currentUser.plan !== 'owner' && currentUser.revisiones_restantes < tareasFiles.length){
+  const nTareas = contarTareas(tareasFiles);
+  if(currentUser && currentUser.plan !== 'owner' && currentUser.revisiones_restantes < nTareas){
     const restantes = currentUser.revisiones_restantes;
     alertBox.innerHTML = `<div class="alert alert-error">
-      Tienes <strong>${restantes} crédito${restantes!==1?'s':''}</strong> — puedes calificar hasta ${restantes} de los ${tareasFiles.length} PDFs que subiste.
-      ${restantes > 0 ? `Quita ${tareasFiles.length - restantes} archivo${tareasFiles.length-restantes!==1?'s':''} de la lista para continuar, o ve a <strong>Mi plan</strong> para comprar más créditos.` : 'Ve a <strong>Mi plan</strong> para comprar créditos.'}
+      Tienes <strong>${restantes} crédito${restantes!==1?'s':''}</strong> — pero esta entrega son ${nTareas} tareas.
+      ${restantes > 0 ? `Quita archivos para dejar ${restantes}, o ve a <strong>Mi plan</strong> para comprar más créditos.` : 'Ve a <strong>Mi plan</strong> para comprar créditos.'}
     </div>`;
     return;
   }
@@ -413,6 +439,9 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     if(!res.ok) throw new Error(`Error ${res.status}`);
 
     const invalidos = res.headers.get('X-Archivos-Invalidos');
+    const evaluadas = res.headers.get('X-Evaluadas');
+    const totalArch = res.headers.get('X-Total-Archivos');
+    const creditos = res.headers.get('X-Creditos-Consumidos');
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -422,13 +451,20 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     a.click();
     a.remove();
 
-    let msg = '¡Listo! Tus tareas calificadas se descargaron. Revisa tu carpeta de descargas.';
+    let resumen = '¡Listo! Tu ZIP se descargó.';
+    if(evaluadas){
+      resumen = `¡Listo! Se evaluaron <strong>${evaluadas} tarea${evaluadas!=='1'?'s':''}</strong>`;
+      if(totalArch) resumen += ` (de ${totalArch} archivo${totalArch!=='1'?'s':''} subidos)`;
+      resumen += '. Tu ZIP se descargó.';
+    }
+    let msg = resumen;
+    if(creditos) msg += `<br><small>Créditos consumidos: <strong>${creditos}</strong></small>`;
     msg += '<br><small style="opacity:.7">⚠️ Los PDFs revisados no se almacenan en la nube — guarda tu ZIP en un lugar seguro.</small>';
     if(invalidos){
       const nombres = decodeURIComponent(invalidos);
       msg += `<br><small style="color:#f5b060">Archivos que no pudieron procesarse (no consumieron crédito): ${nombres}</small>`;
     }
-    alertBox.innerHTML = `<div class="alert alert-success">${msg}</div>`;
+    alertBox.innerHTML = `<div class="alert alert-success"><button class="alert-close" onclick="this.parentElement.remove()">✕</button>${msg}</div>`;
     claveFile = null;
     tareasFiles = [];
     document.getElementById('drop-clave-text').textContent = 'Haz clic o arrastra el PDF de la clave aquí';

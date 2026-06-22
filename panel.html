@@ -86,9 +86,10 @@
       <div class="view-title">Calificar tarea</div>
       <div class="view-sub">Sube la clave de respuestas y los PDFs de los alumnos. Tar-IA revisa cada uno y te devuelve los PDFs anotados.</div>
 
-      <div class="ai-disclaimer">
+      <div class="ai-disclaimer" id="ai-disclaimer">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span>Las calificaciones son <strong>generadas por inteligencia artificial y pueden contener errores</strong>. Revísalas antes de considerarlas definitivas o comunicarlas a tus alumnos.</span>
+        <button id="ai-disclaimer-close" title="Entendido, cerrar">✕</button>
       </div>
 
       <div id="calificar-alert"></div>
@@ -103,10 +104,10 @@
         </div>
 
         <div class="field">
-          <label>Tareas de los alumnos (varios PDFs)<span class="info-i">i<span class="info-pop">Un PDF por alumno. <strong>Tar-IA funciona mejor si tus alumnos:</strong><br>• Numeran cada respuesta (1a, 1b, 2…)<br>• Resuelven en orden, un problema tras otro<br>• Escriben con letra legible y buena luz<br>• Resaltan o encierran el resultado final<br>• Suben un solo PDF derecho (no de cabeza)</span></span></label>
+          <label>Tareas de los alumnos (PDF o fotos)<span class="info-i">i<span class="info-pop">Un PDF (o sus fotos) por alumno. <strong>Tar-IA funciona mejor si tus alumnos:</strong><br>• Numeran cada respuesta (1a, 1b, 2…)<br>• Resuelven en orden, un problema tras otro<br>• Escriben con letra legible y buena luz<br>• Resaltan o encierran el resultado final<br><br>¿Fotos? Nombra cada foto con el nombre del alumno + número de orden (ej. "Juan Pérez 1", "Juan Pérez 2") y se agrupan en una sola tarea.</span></span></label>
           <div class="dropzone" id="drop-tareas">
-            <input type="file" id="input-tareas" accept="application/pdf" multiple>
-            <span>Haz clic o arrastra los PDFs de los alumnos aquí</span>
+            <input type="file" id="input-tareas" accept="application/pdf,image/jpeg,image/png" multiple>
+            <span>Haz clic o arrastra los PDFs o fotos de los alumnos aquí</span>
           </div>
           <div class="file-list" id="tareas-list"></div>
         </div>

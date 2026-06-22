@@ -464,6 +464,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     if(!res.ok) throw new Error(`Error ${res.status}`);
 
     const invalidos = res.headers.get('X-Archivos-Invalidos');
+    const fallidas = res.headers.get('X-Tareas-Fallidas');
     const evaluadas = res.headers.get('X-Evaluadas');
     const totalArch = res.headers.get('X-Total-Archivos');
     const creditos = res.headers.get('X-Creditos-Consumidos');
@@ -487,7 +488,11 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     msg += '<br><small style="opacity:.7">⚠️ Los PDFs revisados no se almacenan en la nube — guarda tu ZIP en un lugar seguro.</small>';
     if(invalidos){
       const nombres = decodeURIComponent(invalidos);
-      msg += `<br><small style="color:#f5b060">Archivos que no pudieron procesarse (no consumieron crédito): ${nombres}</small>`;
+      msg += `<br><small style="color:#f5b060">Archivos no reconocidos (no consumieron crédito): ${nombres}</small>`;
+    }
+    if(fallidas){
+      const nombres = decodeURIComponent(fallidas);
+      msg += `<br><small style="color:#ff8a8a">⚠️ Estas tareas NO se calificaron (no consumieron crédito), probablemente por ser muy pesadas. Reintenta cada una por separado o reduce las fotos: ${nombres}</small>`;
     }
     alertBox.innerHTML = `<div class="alert alert-success"><button class="alert-close" onclick="this.parentElement.remove()">✕</button>${msg}</div>`;
     claveFile = null;

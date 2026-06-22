@@ -27,6 +27,22 @@
   <button id="btn-reenviar-verif">Reenviar correo</button>
 </div>
 
+<!-- MODAL: FOTOS SIN NOMBRE -->
+<div id="modal-fotos" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-emoji">📷</div>
+    <h2>Detectamos fotos sin nombre de alumno</h2>
+    <p>Subiste <strong id="fotos-count">0</strong> imagen(es) que parecen no tener el nombre del alumno (por ejemplo <em>IMG_2043.jpg</em>).</p>
+    <p>Para que varias fotos de un mismo alumno cuenten como <strong>una sola tarea (1 crédito)</strong>, renómbralas con el nombre del alumno + número de orden:</p>
+    <div class="modal-example">Ana López 1.jpg &nbsp;·&nbsp; Ana López 2.jpg &nbsp;·&nbsp; Ana López 3.jpg</div>
+    <p class="modal-warn">⚠️ De lo contrario, <strong>cada foto cuenta como una tarea distinta y consume 1 crédito.</strong></p>
+    <div class="modal-actions">
+      <button id="fotos-quitar" class="btn-secondary">Quitar las fotos</button>
+      <button id="fotos-continuar" class="btn-primary">Entendido, continuar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL CONSENTIMIENTO LEGAL -->
 <div id="modal-consent" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;align-items:center;justify-content:center;padding:24px">
   <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:16px;max-width:480px;width:100%;padding:36px">

@@ -184,6 +184,16 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
   }
 });
 
+/* ── Modal de fotos sin nombre ── */
+document.getElementById('fotos-continuar').addEventListener('click', ()=>{
+  document.getElementById('modal-fotos').style.display = 'none';
+});
+document.getElementById('fotos-quitar').addEventListener('click', ()=>{
+  tareasFiles = tareasFiles.filter(f=>!(f.type !== 'application/pdf' && esNombreGenerico(f.name)));
+  renderTareasList();
+  document.getElementById('modal-fotos').style.display = 'none';
+});
+
 /* ── Disclaimer de IA cerrable (recuerda el cierre) ── */
 (function(){
   const disc = document.getElementById('ai-disclaimer');
@@ -325,10 +335,25 @@ inputTareas.addEventListener('change', e=>{
   });
 });
 
+function esNombreGenerico(filename){
+  const base = filename.replace(/\.[^.]+$/,'').trim();
+  // Nombres típicos de cámara/galería o solo números/símbolos = sin nombre de alumno
+  return /^(img|dsc|pxl|photo|foto|imagen|image|screenshot|captura|whatsapp|wa|fb_img|received|scan|doc)[\s_\-]*\d*$/i.test(base)
+      || /^[\d\s_\-.]+$/.test(base);
+}
+
 function agregarTareas(files){
   const permitidos = ['application/pdf','image/jpeg','image/png'];
-  tareasFiles = tareasFiles.concat(files.filter(f=>permitidos.includes(f.type)));
+  const nuevos = files.filter(f=>permitidos.includes(f.type));
+  tareasFiles = tareasFiles.concat(nuevos);
   renderTareasList();
+
+  // Avisar si hay imágenes con nombre genérico (cada una costaría 1 crédito)
+  const genericas = tareasFiles.filter(f=>f.type !== 'application/pdf' && esNombreGenerico(f.name));
+  if(genericas.length > 0){
+    document.getElementById('fotos-count').textContent = genericas.length;
+    document.getElementById('modal-fotos').style.display = 'flex';
+  }
 }
 
 function renderTareasList(){

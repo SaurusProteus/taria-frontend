@@ -191,6 +191,17 @@ textarea:focus{outline:none;border-color:var(--accent)}
 #verify-banner button{margin-left:auto;background:#f5b060;color:#0b0d10;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
 #verify-banner button:disabled{opacity:.6;cursor:default}
 
+/* ── SELECTOR DE MODO DE CLAVE ── */
+.clave-modo{display:flex;gap:8px;background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px}
+.clave-modo-btn{flex:1;background:none;border:none;color:var(--text2);font-size:13px;font-weight:500;padding:9px 12px;border-radius:7px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s}
+.clave-modo-btn.active{background:var(--accent);color:#0b0d10;font-weight:600}
+#tabla-clave input{background:var(--bg3);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-family:inherit;font-size:13px;padding:6px 8px;width:100%}
+#tabla-clave input:focus{outline:none;border-color:var(--accent)}
+#tabla-clave td{vertical-align:middle}
+#tabla-clave .col-puntos input{width:64px}
+.btn-del-fila{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
+.btn-del-fila:hover{color:var(--error)}
+
 /* ── AVISO DE CRÉDITOS ── */
 .creditos-aviso{background:rgba(200,242,48,.07);border:0.5px solid rgba(200,242,48,.3);border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text2)}
 .creditos-aviso .cred-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);font-size:15px}

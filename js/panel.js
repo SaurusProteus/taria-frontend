@@ -390,6 +390,95 @@ inputClave.addEventListener('change', e=>{
   });
 });
 
+/* ── MODO DE CLAVE: tengo / generar ── */
+let claveModo = 'tengo';
+let problemasFile = null;
+
+document.querySelectorAll('.clave-modo-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    claveModo = btn.dataset.modo;
+    document.querySelectorAll('.clave-modo-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    document.getElementById('modo-tengo').style.display = claveModo==='tengo' ? 'block' : 'none';
+    document.getElementById('modo-generar').style.display = claveModo==='generar' ? 'block' : 'none';
+  });
+});
+
+// Subida del PDF de problemas
+const inputProblemas = document.getElementById('input-problemas');
+const dropProblemas = document.getElementById('drop-problemas');
+dropProblemas.addEventListener('click', ()=>inputProblemas.click());
+inputProblemas.addEventListener('change', e=>{
+  problemasFile = e.target.files[0] || null;
+  document.getElementById('drop-problemas-text').textContent = problemasFile ? `✓ ${problemasFile.name}` : 'Haz clic o arrastra el PDF/foto de los problemas aquí';
+});
+['dragover','dragleave','drop'].forEach(evt=>{
+  dropProblemas.addEventListener(evt, e=>{
+    e.preventDefault();
+    dropProblemas.classList.toggle('drag', evt === 'dragover');
+    if(evt === 'drop' && e.dataTransfer.files[0]){
+      problemasFile = e.dataTransfer.files[0];
+      document.getElementById('drop-problemas-text').textContent = `✓ ${problemasFile.name}`;
+    }
+  });
+});
+
+// Generar la clave con Tar-IA
+document.getElementById('btn-generar-clave').addEventListener('click', async (e)=>{
+  if(!problemasFile){
+    document.getElementById('calificar-alert').innerHTML = '<div class="alert alert-error">Primero sube el PDF o foto de los problemas.</div>';
+    return;
+  }
+  const btn = e.target;
+  btn.disabled = true; btn.textContent = '✨ Resolviendo problemas…';
+  document.getElementById('calificar-alert').innerHTML = '';
+  try{
+    const fd = new FormData();
+    fd.append('problemas', problemasFile);
+    fd.append('instrucciones', document.getElementById('input-instrucciones').value || '');
+    const r = await fetch(`${API_URL}/clave/generar`, { method:'POST', headers: authHeaders(), body: fd });
+    if(r.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error((data.detail && data.detail.message) ? data.detail.message : (data.detail || 'No se pudo generar la clave'));
+    renderClaveEditable(data.items || []);
+    document.getElementById('clave-generada-wrap').style.display = 'block';
+  }catch(err){
+    document.getElementById('calificar-alert').innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+  }finally{
+    btn.disabled = false; btn.textContent = '✨ Generar clave con Tar-IA';
+  }
+});
+
+function filaClaveHTML(it){
+  return `<tr>
+    <td><input class="cl-prob" value="${(it.problema||'').replace(/"/g,'&quot;')}" placeholder="1a"></td>
+    <td><input class="cl-res" value="${(it.resultado||'').replace(/"/g,'&quot;')}" placeholder="resultado"></td>
+    <td class="col-puntos"><input class="cl-pts" type="number" step="0.5" min="0" value="${it.puntos ?? 1}"></td>
+    <td><button type="button" class="btn-del-fila">✕</button></td>
+  </tr>`;
+}
+function renderClaveEditable(items){
+  const body = document.getElementById('clave-body');
+  body.innerHTML = items.map(filaClaveHTML).join('') || filaClaveHTML({});
+  body.querySelectorAll('.btn-del-fila').forEach(b=>b.addEventListener('click', ()=>b.closest('tr').remove()));
+}
+document.getElementById('btn-add-fila').addEventListener('click', ()=>{
+  const body = document.getElementById('clave-body');
+  body.insertAdjacentHTML('beforeend', filaClaveHTML({}));
+  body.querySelectorAll('.btn-del-fila').forEach(b=>{ b.onclick = ()=>b.closest('tr').remove(); });
+});
+
+function leerClaveEditada(){
+  const filas = document.querySelectorAll('#clave-body tr');
+  const items = [];
+  filas.forEach(tr=>{
+    const prob = tr.querySelector('.cl-prob').value.trim();
+    const res = tr.querySelector('.cl-res').value.trim();
+    const pts = parseFloat(tr.querySelector('.cl-pts').value) || 0;
+    if(prob || res) items.push({ problema: prob, resultado: res, puntos: pts });
+  });
+  return items;
+}
+
 /* ── SUBIDA DE TAREAS (múltiples) ── */
 const inputTareas = document.getElementById('input-tareas');
 const dropTareas = document.getElementById('drop-tareas');
@@ -475,7 +564,14 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
   const alertBox = document.getElementById('calificar-alert');
   alertBox.innerHTML = '';
 
-  if(!claveFile){
+  let claveItems = null;
+  if(claveModo === 'generar'){
+    claveItems = leerClaveEditada();
+    if(!claveItems.length){
+      alertBox.innerHTML = '<div class="alert alert-error">Genera la clave con Tar-IA y revísala antes de calificar.</div>';
+      return;
+    }
+  } else if(!claveFile){
     alertBox.innerHTML = '<div class="alert alert-error">Falta subir el PDF de la clave de respuestas.</div>';
     return;
   }
@@ -516,7 +612,11 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
 
   try{
     const formData = new FormData();
-    formData.append('clave', claveFile);
+    if(claveModo === 'generar'){
+      formData.append('clave_generada', JSON.stringify(claveItems));
+    } else {
+      formData.append('clave', claveFile);
+    }
     tareasFiles.forEach(f => formData.append('tareas', f));
     formData.append('instrucciones', document.getElementById('input-instrucciones').value || '');
 

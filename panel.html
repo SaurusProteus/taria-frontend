@@ -111,11 +111,39 @@
       <div id="calificar-alert"></div>
 
       <div class="card">
-        <div class="field">
+        <!-- Selector de modo de clave -->
+        <div class="clave-modo">
+          <button type="button" class="clave-modo-btn active" data-modo="tengo">Ya tengo la clave</button>
+          <button type="button" class="clave-modo-btn" data-modo="generar">Tar-IA arma la clave ✨</button>
+        </div>
+
+        <!-- MODO A: ya tengo la clave -->
+        <div class="field" id="modo-tengo">
           <label>Clave de respuestas (1 PDF)<span class="info-i">i<span class="info-pop"><strong>Tu clave debe incluir, por cada problema:</strong><br>• Número o inciso (1, 2a…)<br>• Resultado correcto<br>• Puntos que vale<br><br>Si no pones puntos, se repartirán por igual. Opcional pero recomendado: el enunciado y los pasos de la solución (mejoran el crédito parcial). A mano o digital, pero legible.</span></span></label>
           <div class="dropzone" id="drop-clave">
             <input type="file" id="input-clave" accept="application/pdf">
             <span id="drop-clave-text">Haz clic o arrastra el PDF de la clave aquí</span>
+          </div>
+        </div>
+
+        <!-- MODO B: Tar-IA resuelve los problemas -->
+        <div class="field" id="modo-generar" style="display:none">
+          <label>Sube solo los PROBLEMAS y Tar-IA arma la clave<span class="info-i">i<span class="info-pop">Sube el PDF (o foto) con los enunciados, sin respuestas. Tar-IA los resuelve y te muestra una clave que puedes <strong>revisar y editar</strong> antes de calificar. Tú ajustas resultados y puntos.</span></span></label>
+          <div class="dropzone" id="drop-problemas">
+            <input type="file" id="input-problemas" accept="application/pdf,image/jpeg,image/png">
+            <span id="drop-problemas-text">Haz clic o arrastra el PDF/foto de los problemas aquí</span>
+          </div>
+          <button type="button" class="btn-secondary" id="btn-generar-clave" style="margin-top:12px">✨ Generar clave con Tar-IA</button>
+          <div id="clave-generada-wrap" style="display:none;margin-top:18px">
+            <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Revisa y ajusta la clave. Edita resultados y puntos si hace falta:</div>
+            <div style="overflow-x:auto">
+              <table id="tabla-clave">
+                <thead><tr><th>Problema</th><th>Resultado</th><th>Puntos</th><th></th></tr></thead>
+                <tbody id="clave-body"></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn-secondary" id="btn-add-fila" style="margin-top:10px;font-size:12px">+ Agregar problema</button>
+            <div id="clave-confirm-msg" style="margin-top:10px;font-size:12px;color:var(--success)"></div>
           </div>
         </div>
 

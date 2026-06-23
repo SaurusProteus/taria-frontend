@@ -661,8 +661,8 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
       const data = await res.json().catch(() => ({}));
       reproducirSonido('recibido');
       alertBox.innerHTML = `<div class="alert alert-success"><button class="alert-close" onclick="this.parentElement.remove()">✕</button>
-        📨 <strong>La cantidad de archivos es considerable.</strong> Estamos calificando tu grupo (${data.total||''} tareas) y te enviaremos el ZIP por correo en unos minutos.
-        <br><small style="opacity:.8">Revisa tu bandeja (y la carpeta de <strong>spam</strong>). Puedes cerrar esta página, el proceso sigue.</small></div>`;
+        📨 <strong>La cantidad de archivos es considerable.</strong> Tar-IA está calificando tu grupo (${data.total||''} tareas) y te enviará el ZIP al correo registrado en unos minutos.
+        <br><small style="opacity:.8">Revisa también la carpeta de <strong>spam</strong>. Puedes cerrar la página 🤖</small></div>`;
       claveFile = null; tareasFiles = [];
       document.getElementById('drop-clave-text').textContent = 'Haz clic o arrastra el PDF de la clave aquí';
       renderTareasList();

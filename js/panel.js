@@ -580,6 +580,11 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     return;
   }
   const nTareas = contarTareas(tareasFiles);
+  if(nTareas > 10){
+    alertBox.innerHTML = `<div class="alert alert-error">Por ahora puedes calificar máximo <strong>10 tareas por envío</strong> (tienes ${nTareas}). Quita algunas y manda el resto en otro lote. La clave generada se conserva.</div>`;
+    document.getElementById('calificar-alert').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
   if(currentUser && currentUser.plan !== 'owner' && currentUser.revisiones_restantes < nTareas){
     const restantes = currentUser.revisiones_restantes;
     alertBox.innerHTML = `<div class="alert alert-error">

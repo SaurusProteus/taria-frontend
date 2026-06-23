@@ -102,9 +102,15 @@ async function buscarUsuarioAdmin(){
           <thead><tr><th>Movimiento</th><th>Créditos</th><th>Archivos</th><th>Nota</th><th>Fecha</th></tr></thead>
           <tbody>${filas}</tbody>
         </table>
+      </div>
+
+      <div style="margin-top:18px;border-top:0.5px solid var(--border);padding-top:14px">
+        <button class="btn-secondary" id="eliminar-usuario-btn" data-email="${u.email}" style="border-color:var(--error);color:var(--error)">Eliminar esta cuenta</button>
+        <div id="eliminar-usuario-msg" style="margin-top:10px"></div>
       </div>`;
 
     document.getElementById('regalo-btn').addEventListener('click', regalarCreditos);
+    document.getElementById('eliminar-usuario-btn').addEventListener('click', eliminarUsuarioAdmin);
   }catch(e){
     cont.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
   }
@@ -124,6 +130,21 @@ async function regalarCreditos(e){
   }catch(err){
     msg.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
     e.target.disabled = false; e.target.textContent = 'Acreditar';
+  }
+}
+
+async function eliminarUsuarioAdmin(e){
+  const email = e.target.dataset.email;
+  const msg = document.getElementById('eliminar-usuario-msg');
+  if(!confirm(`¿Eliminar la cuenta de ${email}?\n\nSe borrarán su perfil, historial y créditos de forma permanente (se conservan solo los comprobantes fiscales). Esta acción no se puede deshacer.`)) return;
+  e.target.disabled = true; e.target.textContent = 'Eliminando…';
+  try{
+    await apiPost('/admin/eliminar-usuario', { email });
+    msg.innerHTML = `<div class="alert alert-success">✓ Cuenta eliminada. Se le notificó por correo.</div>`;
+    document.getElementById('admin-user-result').innerHTML = '';
+  }catch(err){
+    msg.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+    e.target.disabled = false; e.target.textContent = 'Eliminar esta cuenta';
   }
 }
 

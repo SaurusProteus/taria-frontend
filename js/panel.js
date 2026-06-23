@@ -23,6 +23,24 @@ let currentUser = null;
 // Interruptor: ponlo en true cuando la guía esté lista para todos los usuarios
 const AYUDA_PARA_TODOS = false;
 
+// Sonido al terminar (sin archivos, generado con Web Audio)
+function reproducirSonido(tipo){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notas = tipo === 'completado' ? [523, 659, 784] : [659, 523]; // do-mi-sol / recibido
+    notas.forEach((f, i)=>{
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      o.connect(g); g.connect(ctx.destination);
+      const t = ctx.currentTime + i * 0.14;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      o.start(t); o.stop(t + 0.17);
+    });
+  }catch(_){ /* navegador sin audio o sin interacción previa */ }
+}
+
 /* ── NAVEGACIÓN ENTRE VISTAS ── */
 document.querySelectorAll('.side-link').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -580,8 +598,8 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     return;
   }
   const nTareas = contarTareas(tareasFiles);
-  if(nTareas > 10){
-    alertBox.innerHTML = `<div class="alert alert-error">Por ahora puedes calificar máximo <strong>10 tareas por envío</strong> (tienes ${nTareas}). Quita algunas y manda el resto en otro lote. La clave generada se conserva.</div>`;
+  if(nTareas > 60){
+    alertBox.innerHTML = `<div class="alert alert-error">Máximo <strong>60 tareas por envío</strong> (tienes ${nTareas}). Divídelas en varios envíos.</div>`;
     document.getElementById('calificar-alert').scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
@@ -638,6 +656,20 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
       alertBox.innerHTML = `<div class="alert alert-error">${m}</div>`;
       return;
     }
+    // Lote grande → se procesa en segundo plano y llega por correo
+    if(res.status === 202){
+      const data = await res.json().catch(() => ({}));
+      reproducirSonido('recibido');
+      alertBox.innerHTML = `<div class="alert alert-success"><button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+        📨 <strong>La cantidad de archivos es considerable.</strong> Estamos calificando tu grupo (${data.total||''} tareas) y te enviaremos el ZIP por correo en unos minutos.
+        <br><small style="opacity:.8">Revisa tu bandeja (y la carpeta de <strong>spam</strong>). Puedes cerrar esta página, el proceso sigue.</small></div>`;
+      claveFile = null; tareasFiles = [];
+      document.getElementById('drop-clave-text').textContent = 'Haz clic o arrastra el PDF de la clave aquí';
+      renderTareasList();
+      cargarUsuario();
+      return;
+    }
+
     if(!res.ok) throw new Error(`Error ${res.status}`);
 
     const invalidos = res.headers.get('X-Archivos-Invalidos');
@@ -672,6 +704,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
       msg += `<br><small style="color:#ff8a8a">⚠️ Estas tareas NO se calificaron (no consumieron crédito), probablemente por ser muy pesadas. Reintenta cada una por separado o reduce las fotos: ${nombres}</small>`;
     }
     alertBox.innerHTML = `<div class="alert alert-success"><button class="alert-close" onclick="this.parentElement.remove()">✕</button>${msg}</div>`;
+    reproducirSonido('completado');
     claveFile = null;
     tareasFiles = [];
     document.getElementById('drop-clave-text').textContent = 'Haz clic o arrastra el PDF de la clave aquí';

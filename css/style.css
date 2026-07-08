@@ -14,6 +14,7 @@ a{color:inherit}
 ::selection{background:rgba(200,242,48,.3)}
 
 /* ── TOPBAR ── */
+@keyframes nerdy-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:0.5px solid var(--border);background:var(--bg2)}
 .topbar-logo{font-family:'Space Mono',monospace;font-size:19px;color:var(--accent);letter-spacing:-1px;text-decoration:none;display:flex;align-items:center;gap:8px}
 .topbar-logo .tag{font-size:10px;background:rgba(200,242,48,.1);border:0.5px solid rgba(200,242,48,.3);padding:2px 7px;border-radius:10px;letter-spacing:.5px}
@@ -199,6 +200,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 #tabla-clave input:focus{outline:none;border-color:var(--accent)}
 #tabla-clave td{vertical-align:middle}
 #tabla-clave .col-puntos input{width:64px}
+#tabla-clave .col-tol input{width:72px}
 .btn-del-fila{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
 .btn-del-fila:hover{color:var(--error)}
 

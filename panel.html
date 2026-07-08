@@ -11,7 +11,7 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <a href="https://saurusproteus.github.io/taria-frontend/panel.html" class="topbar-logo">Tar-IA <span class="tag">beta</span></a>
+  <a href="https://saurusproteus.github.io/taria-frontend/panel.html" class="topbar-logo"><svg width="22" height="22" viewBox="0 0 100 100" aria-hidden="true" style="flex-shrink:0"><rect width="100" height="100" rx="26" fill="#c8f230"/><path d="M28 53 l15 15 l29 -34" fill="none" stroke="#0b0d10" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/></svg>Tar-IA <span class="tag">beta</span></a>
   <div class="topbar-user">
     <span id="user-name">Cargando…</span>
     <span class="topbar-plan" id="user-plan">—</span>
@@ -88,10 +88,6 @@
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       Cómo usar
     </button>
-    <button class="side-link side-link-admin" data-view="admin" id="side-admin" style="display:none">
-      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6"/><rect x="12" y="7" width="3" height="10"/><rect x="17" y="13" width="3" height="4"/></svg>
-      Admin
-    </button>
   </div>
 
   <!-- MAIN -->
@@ -138,7 +134,7 @@
             <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Revisa y ajusta la clave. Edita resultados y puntos si hace falta:</div>
             <div style="overflow-x:auto">
               <table id="tabla-clave">
-                <thead><tr><th>Problema</th><th>Resultado</th><th>Puntos</th><th></th></tr></thead>
+                <thead><tr><th>Problema</th><th>Resultado</th><th>Puntos</th><th>Tol. ±<span class="info-i">i<span class="info-pop"><strong>Tolerancia por problema (opcional).</strong><br>Déjalo vacío = se exige el valor <strong>exacto</strong>.<br>Pon un número (ej. 0.5) = se da por correcto si el resultado del alumno difiere hasta ±0.5 de la clave.<br>Úsalo solo en los reactivos donde apliquen redondeos.</span></span></th><th></th></tr></thead>
                 <tbody id="clave-body"></tbody>
               </table>
             </div>
@@ -161,7 +157,18 @@
           <textarea id="input-instrucciones" placeholder="Ej. Acepta resultados equivalentes aunque no estén simplificados…"></textarea>
         </div>
 
+
         <div id="progreso-wrap" style="display:none;margin-bottom:20px">
+          <!-- Nerdy pensando: acompaña la espera sin ser invasivo -->
+          <div style="display:flex;justify-content:center;margin-bottom:10px">
+            <svg width="60" height="54" viewBox="0 0 100 90" aria-hidden="true" style="animation:nerdy-bob 3s ease-in-out infinite">
+              <rect x="14" y="10" width="72" height="68" rx="19" fill="#ECE8D8"/>
+              <circle cx="38" cy="42" r="12" fill="#0b0d10"/><circle cx="62" cy="42" r="12" fill="#0b0d10"/>
+              <circle cx="40" cy="40" r="4.5" fill="#c8f230"/><circle cx="64" cy="40" r="4.5" fill="#c8f230"/>
+              <path d="M40 62 Q50 58 60 62" stroke="#0b0d10" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+              <text x="80" y="22" font-family="monospace" font-size="16" fill="#c8f230">?</text>
+            </svg>
+          </div>
           <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px">
             <span id="progreso-label">Procesando…</span>
             <span id="progreso-pct">0%</span>
@@ -270,83 +277,6 @@
         <button class="btn-secondary" id="btn-eliminar-cuenta" style="border-color:var(--error);color:var(--error)">
           Eliminar mi cuenta
         </button>
-      </div>
-    </div>
-
-    <!-- VISTA: ADMIN (solo dueño) -->
-    <div class="view" id="view-admin">
-      <div class="view-title">Panel del negocio</div>
-      <div class="view-sub">Métricas en tiempo real de Tar-IA. Visible solo para el dueño.</div>
-
-      <div id="admin-alert"></div>
-
-      <!-- Gestión de usuario y créditos -->
-      <div class="card" style="margin-bottom:24px">
-        <h3 style="font-size:15px;margin-bottom:6px">Gestión de usuario y créditos</h3>
-        <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Busca un usuario por correo para ver su saldo, su historial de créditos y darle revisiones de cortesía.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <input type="email" id="admin-buscar-email" class="login-input" placeholder="correo@ejemplo.com" style="flex:1;min-width:220px;margin:0">
-          <button class="btn-primary" id="admin-buscar-btn" style="white-space:nowrap">Buscar</button>
-        </div>
-        <div id="admin-user-result" style="margin-top:18px"></div>
-      </div>
-
-      <!-- KPIs principales -->
-      <div class="kpi-grid">
-        <div class="kpi-card kpi-accent">
-          <div class="kpi-label">Ingresos totales</div>
-          <div class="kpi-num" id="kpi-ingresos">—</div>
-          <div class="kpi-foot" id="kpi-ingresos-mes">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Margen estimado</div>
-          <div class="kpi-num" id="kpi-margen">—</div>
-          <div class="kpi-foot">tras costo de API estimado</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Usuarios</div>
-          <div class="kpi-num" id="kpi-usuarios">—</div>
-          <div class="kpi-foot" id="kpi-usuarios-mes">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Tareas calificadas</div>
-          <div class="kpi-num" id="kpi-tareas">—</div>
-          <div class="kpi-foot" id="kpi-tareas-mes">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Ventas (pagos)</div>
-          <div class="kpi-num" id="kpi-ventas">—</div>
-          <div class="kpi-foot">transacciones completadas</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Costo API estimado</div>
-          <div class="kpi-num" id="kpi-costo">—</div>
-          <div class="kpi-foot">~$0.60 MXN por tarea</div>
-        </div>
-      </div>
-
-      <!-- Desglose por plan -->
-      <div class="card" style="margin-bottom:20px">
-        <h3 style="font-size:15px;margin-bottom:16px">Usuarios por plan</h3>
-        <div id="admin-planes"><div style="color:var(--text3);font-size:13px">Cargando…</div></div>
-      </div>
-
-      <!-- Tabla transacciones -->
-      <div class="card" style="margin-bottom:20px;overflow-x:auto">
-        <h3 style="font-size:15px;margin-bottom:14px">Últimas transacciones</h3>
-        <table>
-          <thead><tr><th>Cliente</th><th>Concepto</th><th>Monto</th><th>Créditos</th><th>Fecha</th></tr></thead>
-          <tbody id="admin-tx"><tr><td colspan="5" style="text-align:center;color:var(--text3)">Cargando…</td></tr></tbody>
-        </table>
-      </div>
-
-      <!-- Tabla usuarios -->
-      <div class="card" style="overflow-x:auto">
-        <h3 style="font-size:15px;margin-bottom:14px">Usuarios recientes</h3>
-        <table>
-          <thead><tr><th>Nombre</th><th>Correo</th><th>Plan</th><th>Créditos</th><th>Registro</th></tr></thead>
-          <tbody id="admin-usuarios"><tr><td colspan="5" style="text-align:center;color:var(--text3)">Cargando…</td></tr></tbody>
-        </table>
       </div>
     </div>
 

@@ -51,7 +51,6 @@ document.querySelectorAll('.side-link').forEach(btn=>{
     if(btn.dataset.view === 'historial') cargarHistorial();
     if(btn.dataset.view === 'plan') cargarPlanes();
     if(btn.dataset.view === 'cuenta') cargarCuenta();
-    if(btn.dataset.view === 'admin') cargarAdmin();
   });
 });
 
@@ -291,10 +290,6 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
   }
 });
 
-/* ── Admin: buscar usuario ── */
-document.getElementById('admin-buscar-btn').addEventListener('click', buscarUsuarioAdmin);
-document.getElementById('admin-buscar-email').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); buscarUsuarioAdmin(); } });
-
 /* ── Modal de fotos sin nombre ── */
 document.getElementById('fotos-continuar').addEventListener('click', ()=>{
   document.getElementById('modal-fotos').style.display = 'none';
@@ -388,9 +383,7 @@ async function cargarUsuario(){
     document.getElementById('user-name').textContent = currentUser.name;
     document.getElementById('user-plan').textContent = currentUser.plan.toUpperCase();
     document.getElementById('user-creditos').textContent = currentUser.revisiones_restantes + ' créditos';
-    if(currentUser.plan === 'owner'){
-      document.getElementById('side-admin').style.display = 'flex';
-    }
+    // El panel Admin se movió a Enginerd HQ (admin.enginerd.mx)
     // "Cómo usar": por ahora solo el dueño la ve (cambia AYUDA_PARA_TODOS a true para liberarla)
     if(currentUser.plan === 'owner' || AYUDA_PARA_TODOS){
       document.getElementById('side-ayuda').style.display = 'flex';
@@ -413,18 +406,29 @@ cargarUsuario();
 /* ── SUBIDA DE CLAVE ── */
 const inputClave = document.getElementById('input-clave');
 const dropClave = document.getElementById('drop-clave');
-dropClave.addEventListener('click', ()=>inputClave.click());
-inputClave.addEventListener('change', e=>{
-  claveFile = e.target.files[0] || null;
+// La clave debe ser PDF. Rechazamos aquí (ej. Word) para no mandar algo que el
+// servidor no puede leer y evitar errores confusos ("fail to fetch").
+function claveEsPDF(file){
+  return file && (file.type === 'application/pdf' || /\.pdf$/i.test(file.name));
+}
+function setClave(file){
+  if(file && !claveEsPDF(file)){
+    document.getElementById('drop-clave-text').textContent =
+      '✗ La clave debe ser PDF. Si tienes Word, usa "Guardar como PDF" y súbelo.';
+    claveFile = null;
+    return;
+  }
+  claveFile = file || null;
   document.getElementById('drop-clave-text').textContent = claveFile ? `✓ ${claveFile.name}` : 'Haz clic o arrastra el PDF de la clave aquí';
-});
+}
+dropClave.addEventListener('click', ()=>inputClave.click());
+inputClave.addEventListener('change', e=> setClave(e.target.files[0] || null));
 ['dragover','dragleave','drop'].forEach(evt=>{
   dropClave.addEventListener(evt, e=>{
     e.preventDefault();
     dropClave.classList.toggle('drag', evt === 'dragover');
     if(evt === 'drop' && e.dataTransfer.files[0]){
-      claveFile = e.dataTransfer.files[0];
-      document.getElementById('drop-clave-text').textContent = `✓ ${claveFile.name}`;
+      setClave(e.dataTransfer.files[0]);
     }
   });
 });
@@ -492,6 +496,7 @@ function filaClaveHTML(it){
     <td><input class="cl-prob" value="${(it.problema||'').replace(/"/g,'&quot;')}" placeholder="1a"></td>
     <td><input class="cl-res" value="${(it.resultado||'').replace(/"/g,'&quot;')}" placeholder="resultado"></td>
     <td class="col-puntos"><input class="cl-pts" type="number" step="0.5" min="0" value="${it.puntos ?? 1}"></td>
+    <td class="col-tol"><input class="cl-tol" type="number" step="0.1" min="0" value="${it.tolerancia ?? ''}" placeholder="exacto"></td>
     <td><button type="button" class="btn-del-fila">✕</button></td>
   </tr>`;
 }
@@ -513,7 +518,12 @@ function leerClaveEditada(){
     const prob = tr.querySelector('.cl-prob').value.trim();
     const res = tr.querySelector('.cl-res').value.trim();
     const pts = parseFloat(tr.querySelector('.cl-pts').value) || 0;
-    if(prob || res) items.push({ problema: prob, resultado: res, puntos: pts });
+    const tolRaw = tr.querySelector('.cl-tol') ? tr.querySelector('.cl-tol').value.trim() : '';
+    const tol = parseFloat(tolRaw);
+    const item = { problema: prob, resultado: res, puntos: pts };
+    // Tolerancia por problema: solo se incluye si el docente la capturó (vacío = exacto).
+    if(!isNaN(tol) && tol > 0) item.tolerancia = tol;
+    if(prob || res) items.push(item);
   });
   return items;
 }
@@ -663,6 +673,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     }
     tareasFiles.forEach(f => formData.append('tareas', f));
     formData.append('instrucciones', document.getElementById('input-instrucciones').value || '');
+    // La tolerancia ahora va POR problema dentro de la clave (columna Tol. ±), no global.
 
     const res = await fetch(`${API_URL}/calificar`, {
       method: 'POST',

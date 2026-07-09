@@ -57,7 +57,27 @@
   .mk.bad{background:rgba(231,76,60,.16);color:#ff6b5b}
   .mk.half{background:rgba(243,156,18,.16);color:#f5b942}
   .grade-foot{font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)}
-  .hero-nerdy{position:absolute;left:2px;bottom:-16px;width:104px;z-index:3;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55));animation:nerdy-bob 4s ease-in-out infinite}
+  .hero-nerdy{position:absolute;left:2px;bottom:-16px;width:104px;z-index:7;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55));animation:nerdy-bob 4s ease-in-out infinite}
+
+  /* Pila de tareas que se apilan (simula que Tar-IA califica muchas sola) */
+  .stack{position:relative}
+  .grade-card{position:relative;z-index:6}
+  .stack .scard{position:absolute;inset:0;background:var(--bg2);border:0.5px solid var(--border2);border-radius:16px;box-shadow:0 20px 44px rgba(0,0,0,.4);overflow:hidden;opacity:0}
+  .stack .scard::before{content:'';position:absolute;top:0;left:0;right:0;height:38px;background:var(--accent);opacity:.9}
+  .stack .scard::after{content:'';position:absolute;left:16px;top:54px;width:60%;height:7px;border-radius:4px;background:var(--border2);box-shadow:0 16px 0 -1px var(--border2),0 32px 0 -1px var(--border2)}
+  .stack .b1{z-index:5}.stack .b2{z-index:4}.stack .b3{z-index:3}.stack .b4{z-index:2}.stack .b5{z-index:1}
+  /* Estado final (apilado, visible) al activar .go; la entrada cae desde arriba con 'drop'.
+     El estado final vive en el CSS base (no en var() dentro de @keyframes → robusto). */
+  .stack.go .b1{opacity:.62;transform:translate(9px,-9px) rotate(2deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .15s both}
+  .stack.go .b2{opacity:.50;transform:translate(18px,-18px) rotate(4deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .45s both}
+  .stack.go .b3{opacity:.40;transform:translate(27px,-27px) rotate(6deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .75s both}
+  .stack.go .b4{opacity:.30;transform:translate(36px,-36px) rotate(8deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) 1.05s both}
+  .stack.go .b5{opacity:.20;transform:translate(45px,-45px) rotate(10deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) 1.35s both}
+  @keyframes drop{ from{opacity:0;transform:translate(0,-64px) rotate(0) scale(.97)} }
+  .review-counter{position:absolute;top:-14px;right:6px;z-index:8;display:flex;align-items:center;gap:7px;background:var(--bg2);border:0.5px solid rgba(200,242,48,.32);border-radius:99px;padding:7px 13px;font-family:'Space Mono',monospace;font-size:12.5px;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .review-counter .rc-c{color:#0b0d10;background:var(--accent);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+  .review-counter b{color:var(--accent);font-weight:700}
+  @media(prefers-reduced-motion:reduce){.stack.go .scard{animation-duration:.01s}}
 
   /* SECCIONES */
   .sec{padding:78px 0}
@@ -160,6 +180,7 @@
       </div>
 
       <div class="hero-visual">
+        <div class="review-counter"><span class="rc-c">✓</span> <b id="rc-num">0</b> tareas revisadas</div>
         <!-- Nerdy asomándose -->
         <svg class="hero-nerdy" viewBox="0 0 120 150" fill="none" aria-hidden="true">
           <ellipse cx="60" cy="142" rx="38" ry="6" fill="#000" opacity=".3"/>
@@ -171,8 +192,15 @@
           <rect x="74" y="96" width="34" height="34" rx="9" fill="#c8f230"/>
           <path d="M82 113l5 5 9-11" stroke="#0b0d10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
-        <!-- Tarjeta de tarea calificada -->
-        <div class="grade-card">
+        <!-- Pila de tareas (se apilan al entrar) + tarjeta principal -->
+        <div class="stack" id="stack">
+          <span class="scard b5"></span>
+          <span class="scard b4"></span>
+          <span class="scard b3"></span>
+          <span class="scard b2"></span>
+          <span class="scard b1"></span>
+          <!-- Tarjeta de tarea calificada -->
+          <div class="grade-card">
           <div class="grade-head">
             <span class="g">9.2</span><span class="g10">/ 10</span>
             <span class="who">Ana López<br>Cálculo · Tarea 4</span>
@@ -184,6 +212,7 @@
             <div class="grow"><span class="mk half">½</span> Problema 4 · Integral: error de signo</div>
             <div class="grade-foot">Revisado con Tar-IA · enginerd.mx</div>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -332,5 +361,34 @@
   </footer>
 
 </div>
+
+<script>
+  // Anima la pila de tareas y el contador cuando el hero entra en vista.
+  (function(){
+    var stack = document.getElementById('stack');
+    var num = document.getElementById('rc-num');
+    if(!stack || !num) return;
+    function countTo(target, dur){
+      var start = performance.now();
+      (function tick(now){
+        var p = Math.min(1, (now - start) / dur);
+        num.textContent = Math.round(p * target);
+        if(p < 1) requestAnimationFrame(tick);
+      })(performance.now());
+    }
+    function run(){
+      stack.classList.add('go');
+      countTo(34, 2200);
+      // Sensación "viva": sigue sumando de a poco (hasta 60).
+      setInterval(function(){
+        var n = parseInt(num.textContent, 10) || 34;
+        if(n < 60) num.textContent = n + 1;
+      }, 4500);
+    }
+    // El hero siempre está a la vista al cargar → dispara directo (sin depender de IO).
+    if(document.readyState === 'complete') setTimeout(run, 350);
+    else window.addEventListener('load', function(){ setTimeout(run, 350); });
+  })();
+</script>
 </body>
 </html>

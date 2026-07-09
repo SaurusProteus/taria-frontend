@@ -19,20 +19,22 @@
   // GitHub Pages SPA fallback — handles /auth/callback?token=...
   const path = window.location.pathname;
   const params = new URLSearchParams(window.location.search);
+  // Base agnóstica: sirve tanto en github.io/taria-frontend como en un dominio propio (raíz).
+  const B = path.indexOf('/taria-frontend') === 0 ? '/taria-frontend' : '';
 
   if(path.endsWith('/auth/callback') || path.endsWith('/auth/callback/')){
     const token = params.get('token');
     if(token){
       localStorage.setItem('taria_token', token);
-      window.location.href = '/taria-frontend/panel.html';
+      window.location.href = B + '/panel.html';
     } else {
-      window.location.href = '/taria-frontend/login.html?msg=No se recibió token de autenticación';
+      window.location.href = B + '/login.html?msg=No se recibió token de autenticación';
     }
   } else if(path.endsWith('/auth/error') || path.endsWith('/auth/error/')){
     const msg = params.get('msg') || 'Error al iniciar sesión';
-    window.location.href = '/taria-frontend/login.html?msg=' + encodeURIComponent(msg);
+    window.location.href = B + '/login.html?msg=' + encodeURIComponent(msg);
   } else {
-    window.location.href = '/taria-frontend/index.html';
+    window.location.href = B + '/index.html';
   }
 </script>
 </body>

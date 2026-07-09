@@ -68,11 +68,13 @@
   .stack .b1{z-index:5}.stack .b2{z-index:4}.stack .b3{z-index:3}.stack .b4{z-index:2}.stack .b5{z-index:1}
   /* Estado final (apilado, visible) al activar .go; la entrada cae desde arriba con 'drop'.
      El estado final vive en el CSS base (no en var() dentro de @keyframes → robusto). */
-  .stack.go .b1{opacity:.62;transform:translate(9px,-9px) rotate(2deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .15s both}
-  .stack.go .b2{opacity:.50;transform:translate(18px,-18px) rotate(4deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .45s both}
+  /* Se apilan de ATRÁS hacia ADELANTE: la b5 (más al fondo) cae primero; la b1 (más
+     cercana al frente, detrás de la tarea revisada) cae al final. */
+  .stack.go .b1{opacity:.62;transform:translate(9px,-9px) rotate(2deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) 1.35s both}
+  .stack.go .b2{opacity:.50;transform:translate(18px,-18px) rotate(4deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) 1.05s both}
   .stack.go .b3{opacity:.40;transform:translate(27px,-27px) rotate(6deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .75s both}
-  .stack.go .b4{opacity:.30;transform:translate(36px,-36px) rotate(8deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) 1.05s both}
-  .stack.go .b5{opacity:.20;transform:translate(45px,-45px) rotate(10deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) 1.35s both}
+  .stack.go .b4{opacity:.30;transform:translate(36px,-36px) rotate(8deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .45s both}
+  .stack.go .b5{opacity:.20;transform:translate(45px,-45px) rotate(10deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .15s both}
   @keyframes drop{ from{opacity:0;transform:translate(0,-64px) rotate(0) scale(.97)} }
   .review-counter{position:absolute;top:-14px;right:6px;z-index:8;display:flex;align-items:center;gap:7px;background:var(--bg2);border:0.5px solid rgba(200,242,48,.32);border-radius:99px;padding:7px 13px;font-family:'Space Mono',monospace;font-size:12.5px;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,.4)}
   .review-counter .rc-c{color:#0b0d10;background:var(--accent);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}

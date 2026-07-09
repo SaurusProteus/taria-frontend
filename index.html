@@ -75,11 +75,13 @@
   .stack.go .b3{opacity:.40;transform:translate(27px,-27px) rotate(6deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .75s both}
   .stack.go .b4{opacity:.30;transform:translate(36px,-36px) rotate(8deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .45s both}
   .stack.go .b5{opacity:.20;transform:translate(45px,-45px) rotate(10deg);animation:drop .7s cubic-bezier(.2,.8,.25,1) .15s both}
+  /* La tarea revisada (9.2) aterriza al FINAL, encima de la pila ya formada. */
+  .stack.go .grade-card{animation:drop .72s cubic-bezier(.2,.9,.25,1) 1.75s both}
   @keyframes drop{ from{opacity:0;transform:translate(0,-64px) rotate(0) scale(.97)} }
   .review-counter{position:absolute;top:-14px;right:6px;z-index:8;display:flex;align-items:center;gap:7px;background:var(--bg2);border:0.5px solid rgba(200,242,48,.32);border-radius:99px;padding:7px 13px;font-family:'Space Mono',monospace;font-size:12.5px;color:var(--text);box-shadow:0 10px 30px rgba(0,0,0,.4)}
   .review-counter .rc-c{color:#0b0d10;background:var(--accent);width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
   .review-counter b{color:var(--accent);font-weight:700}
-  @media(prefers-reduced-motion:reduce){.stack.go .scard{animation-duration:.01s}}
+  @media(prefers-reduced-motion:reduce){.stack.go .scard,.stack.go .grade-card{animation:none}}
 
   /* SECCIONES */
   .sec{padding:78px 0}
@@ -387,9 +389,9 @@
         if(n < 60) num.textContent = n + 1;
       }, 4500);
     }
-    // El hero siempre está a la vista al cargar → dispara directo (sin depender de IO).
-    if(document.readyState === 'complete') setTimeout(run, 350);
-    else window.addEventListener('load', function(){ setTimeout(run, 350); });
+    // El hero ya está en el DOM (script al final del body): arranca de inmediato, antes
+    // del primer paint, para que la pila y la tarjeta revisada inicien OCULTAS (sin parpadeo).
+    run();
   })();
 </script>
 </body>

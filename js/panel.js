@@ -8,7 +8,7 @@ requireAuth();
     clearTimeout(timer);
     timer = setTimeout(() => {
       clearToken();
-      window.location.href = BASE + '/index.html?msg=Tu sesión se cerró por seguridad tras un periodo de inactividad';
+      window.location.href = BASE + '/login.html?msg=Tu sesión se cerró por seguridad tras un periodo de inactividad';
     }, LIMITE);
   }
   ['mousemove','keydown','click','scroll','touchstart'].forEach(ev =>
@@ -282,7 +282,7 @@ document.getElementById('btn-eliminar-cuenta').addEventListener('click', async (
     await apiDelete('/auth/me');
     clearToken();
     alert('Tu cuenta ha sido eliminada. Gracias por usar Tar-IA.');
-    window.location.href = BASE + '/index.html';
+    window.location.href = BASE + '/login.html';
   }catch(e){
     alertBox.innerHTML = `<div class="alert alert-error">No se pudo eliminar la cuenta: ${e.message}</div>`;
     btn.disabled = false;
@@ -329,7 +329,7 @@ document.getElementById('btn-reenviar-verif').addEventListener('click', async (e
 
 document.getElementById('btn-logout').addEventListener('click', ()=>{
   clearToken();
-  window.location.href = BASE + '/index.html';
+  window.location.href = BASE + '/login.html';
 });
 
 /* ── CONSENTIMIENTO LEGAL ── */
@@ -479,7 +479,7 @@ document.getElementById('btn-generar-clave').addEventListener('click', async (e)
     fd.append('problemas', problemasFile);
     fd.append('instrucciones', document.getElementById('input-instrucciones').value || '');
     const r = await fetch(`${API_URL}/clave/generar`, { method:'POST', headers: authHeaders(), body: fd });
-    if(r.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+    if(r.status === 401){ clearToken(); window.location.href = BASE + '/login.html'; return; }
     const data = await r.json().catch(()=>({}));
     if(!r.ok) throw new Error((data.detail && data.detail.message) ? data.detail.message : (data.detail || 'No se pudo generar la clave'));
     renderClaveEditable(data.items || []);
@@ -681,7 +681,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
       body: formData
     });
 
-    if(res.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+    if(res.status === 401){ clearToken(); window.location.href = BASE + '/login.html'; return; }
     if(res.status === 402 || res.status === 403 || res.status === 400){
       const data = await res.json().catch(() => ({}));
       const m = (data.detail && data.detail.message) ? data.detail.message : (data.detail || 'No se pudo procesar la solicitud');

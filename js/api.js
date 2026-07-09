@@ -16,7 +16,7 @@ function authHeaders(){
 
 async function apiGet(path){
   const r = await fetch(`${API_URL}${path}`, { headers: authHeaders() });
-  if(r.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+  if(r.status === 401){ clearToken(); window.location.href = BASE + '/login.html'; return; }
   if(!r.ok) throw new Error(`Error ${r.status}`);
   return r.json();
 }
@@ -27,18 +27,18 @@ async function apiPost(path, body){
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined
   });
-  if(r.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+  if(r.status === 401){ clearToken(); window.location.href = BASE + '/login.html'; return; }
   if(!r.ok) throw new Error(`Error ${r.status}`);
   return r.json();
 }
 
 async function apiDelete(path){
   const r = await fetch(`${API_URL}${path}`, { method: 'DELETE', headers: authHeaders() });
-  if(r.status === 401){ clearToken(); window.location.href = BASE + '/index.html'; return; }
+  if(r.status === 401){ clearToken(); window.location.href = BASE + '/login.html'; return; }
   if(!r.ok) throw new Error(`Error ${r.status}`);
   return r.json();
 }
 
 function requireAuth(){
-  if(!getToken()){ window.location.href = BASE + '/index.html'; }
+  if(!getToken()){ window.location.href = BASE + '/login.html'; }
 }

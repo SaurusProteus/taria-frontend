@@ -26,11 +26,11 @@
       localStorage.setItem('taria_token', token);
       window.location.href = '/taria-frontend/panel.html';
     } else {
-      window.location.href = '/taria-frontend/index.html?msg=No se recibió token de autenticación';
+      window.location.href = '/taria-frontend/login.html?msg=No se recibió token de autenticación';
     }
   } else if(path.endsWith('/auth/error') || path.endsWith('/auth/error/')){
     const msg = params.get('msg') || 'Error al iniciar sesión';
-    window.location.href = '/taria-frontend/index.html?msg=' + encodeURIComponent(msg);
+    window.location.href = '/taria-frontend/login.html?msg=' + encodeURIComponent(msg);
   } else {
     window.location.href = '/taria-frontend/index.html';
   }

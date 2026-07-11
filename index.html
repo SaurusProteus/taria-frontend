@@ -57,7 +57,10 @@
   .mk.bad{background:rgba(231,76,60,.16);color:#ff6b5b}
   .mk.half{background:rgba(243,156,18,.16);color:#f5b942}
   .grade-foot{font-family:'Space Mono',monospace;font-size:10px;color:var(--text3);margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)}
-  .hero-nerdy{position:absolute;left:2px;bottom:-16px;width:104px;z-index:7;filter:drop-shadow(0 14px 26px rgba(0,0,0,.55));animation:nerdy-bob 4s ease-in-out infinite}
+  .hero-nerdy{position:absolute;left:-4px;bottom:-20px;width:140px;z-index:7;filter:drop-shadow(0 16px 28px rgba(0,0,0,.55));animation:nerdy-bob 4s ease-in-out infinite}
+  .hn-steam path{animation:hn-steam 2.2s ease-in-out infinite}
+  .hn-steam path:nth-child(2){animation-delay:.7s}
+  @keyframes hn-steam{0%,100%{opacity:.2}50%{opacity:.9}}
 
   /* Pila de tareas que se apilan (simula que Tar-IA califica muchas sola) */
   .stack{position:relative}
@@ -100,12 +103,43 @@
   .step .n{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#0b0d10;font-family:'Space Mono',monospace;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
   .step h3{font-size:15.5px;margin-bottom:7px;letter-spacing:-.5px}
   .step p{color:var(--text2);font-size:13.5px;line-height:1.55}
+  /* Ilustración animada por paso */
+  .step-ill{height:96px;border-radius:12px;background:radial-gradient(circle at 50% 34%, rgba(200,242,48,.10), rgba(200,242,48,.02));border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;overflow:hidden}
+  .step-ill svg{width:66px;height:66px}
+  @keyframes bob-up{0%,100%{transform:translateY(3px)}50%{transform:translateY(-4px)}}
+  @keyframes bob-down{0%,100%{transform:translateY(-3px)}50%{transform:translateY(4px)}}
+  @keyframes pulse-lime{0%,100%{opacity:.5;transform:scale(.94)}50%{opacity:1;transform:scale(1)}}
+  @keyframes scan{0%,100%{transform:translateY(-13px)}50%{transform:translateY(13px)}}
+  .ill-bob-up{animation:bob-up 2.4s ease-in-out infinite}
+  .ill-bob-down{animation:bob-down 2.4s ease-in-out infinite}
+  .ill-pulse{transform-origin:center;transform-box:fill-box;animation:pulse-lime 2s ease-in-out infinite}
+  .ill-scan{animation:scan 2.6s ease-in-out infinite}
+  @media(prefers-reduced-motion:reduce){.ill-bob-up,.ill-bob-down,.ill-pulse,.ill-scan,.hn-steam path{animation:none}}
 
   /* EJEMPLO */
   .example{background:var(--bg2);border:0.5px solid var(--border);border-radius:20px;padding:40px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
   .example ul{list-style:none;margin-top:18px;display:flex;flex-direction:column;gap:13px}
   .example li{display:flex;gap:11px;align-items:flex-start;color:var(--text2);font-size:14.5px;line-height:1.5}
   .example li .c{color:var(--accent);flex-shrink:0;margin-top:2px}
+  /* Mock fiel al PDF real que recibe el alumno */
+  .report-mock{max-width:360px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.5);color:#1a1a1a}
+  .rm-head{background:#0b0d10;padding:16px 18px 14px;text-align:center}
+  .rm-grade{font-family:'Space Mono',monospace;font-size:40px;font-weight:700;color:#c8f230;line-height:1}
+  .rm-grade small{font-size:13px;color:#8a929c;font-weight:400}
+  .rm-pill{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:#37c46b;letter-spacing:.5px;margin-top:5px}
+  .rm-name{color:#f0ece0;font-weight:700;font-size:14px;margin-top:8px}
+  .rm-sub{color:#8a929c;font-size:10px;margin-top:2px;font-family:'Space Mono',monospace}
+  .rm-body{padding:14px 16px 16px}
+  .rm-title{font-weight:700;font-size:12px;margin-bottom:8px}
+  .rm-table{width:100%;border-collapse:collapse}
+  .rm-table th{background:#0b0d10;color:#c8f230;font-family:'Space Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:.3px;padding:5px 6px;text-align:left}
+  .rm-table td{padding:6px;border-bottom:0.5px solid #eef0f2;font-size:11px;color:#555;vertical-align:top}
+  .rm-table tr:nth-child(even) td{background:#f8f9fa}
+  .rm-ok{color:#27AE60;font-weight:700}.rm-bad{color:#E74C3C;font-weight:700}.rm-half{color:#F39C12;font-weight:700}
+  .rm-total{background:#0b0d10;color:#c8f230;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:8px 10px;display:flex;justify-content:space-between}
+  .rm-rec{margin-top:10px;background:#EDF7D2;border-radius:8px;padding:10px 12px;font-size:11px;color:#3a4a1a;line-height:1.5}
+  .rm-rec b{color:#1a1a1a}
+  .example-note{text-align:center;font-family:'Space Mono',monospace;font-size:11px;color:var(--text3);margin-top:14px}
 
   /* PRECIOS */
   .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:stretch}
@@ -185,16 +219,25 @@
 
       <div class="hero-visual">
         <div class="review-counter"><span class="rc-c">✓</span> <b id="rc-num">0</b> tareas revisadas</div>
-        <!-- Nerdy asomándose -->
+        <!-- Nerdy con su taza de café (guiño: "califica mientras te tomas un café") -->
         <svg class="hero-nerdy" viewBox="0 0 120 150" fill="none" aria-hidden="true">
           <ellipse cx="60" cy="142" rx="38" ry="6" fill="#000" opacity=".3"/>
           <rect x="30" y="92" width="60" height="46" rx="16" fill="#1f2a22"/>
+          <!-- bracito que sostiene la taza -->
+          <rect x="86" y="112" width="12" height="22" rx="6" fill="#c8f230"/>
           <rect x="28" y="28" width="64" height="60" rx="17" fill="#ECE8D8"/>
           <circle cx="48" cy="58" r="11" fill="#0b0d10"/><circle cx="72" cy="58" r="11" fill="#0b0d10"/>
           <circle cx="48" cy="58" r="4" fill="#c8f230"/><circle cx="72" cy="58" r="4" fill="#c8f230"/>
           <line x1="59" y1="57" x2="61" y2="57" stroke="#0b0d10" stroke-width="3" stroke-linecap="round"/>
-          <rect x="74" y="96" width="34" height="34" rx="9" fill="#c8f230"/>
-          <path d="M82 113l5 5 9-11" stroke="#0b0d10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- taza -->
+          <path d="M78 110 h24 v12 a7 7 0 0 1 -7 7 h-10 a7 7 0 0 1 -7 -7 z" fill="#ECE8D8"/>
+          <rect x="78" y="108" width="24" height="5" rx="2.5" fill="#0b0d10"/>
+          <path d="M102 113 h3.5 a5 5 0 0 1 0 10 h-3.5" fill="none" stroke="#ECE8D8" stroke-width="3.4"/>
+          <!-- vapor -->
+          <g class="hn-steam" stroke="#c8f230" stroke-width="2.4" stroke-linecap="round" fill="none">
+            <path d="M85 104 q-3 -4 0 -7 q3 -3 0 -7"/>
+            <path d="M94 104 q-3 -4 0 -7 q3 -3 0 -7"/>
+          </g>
         </svg>
         <!-- Pila de tareas (se apilan al entrar) + tarjeta principal -->
         <div class="stack" id="stack">
@@ -230,19 +273,19 @@
       <p class="sub">Lo que antes te tomaba horas, ahora es un café.</p>
       <div class="features">
         <div class="feat">
-          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-          <h3>Califica en minutos, no en noches</h3>
-          <p>Sube el grupo completo y Tar-IA revisa todas las tareas en paralelo. Recibes un ZIP con cada una lista.</p>
+          <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg></div>
+          <h3>Súbelas y sigue con tu día</h3>
+          <p>El grupo completo se califica en paralelo. Si son muchas, Tar-IA las procesa en segundo plano y <strong>te manda el ZIP por correo</strong> en unos minutos — sin esperar en la página.</p>
         </div>
         <div class="feat">
           <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
           <h3>Anotaciones por problema</h3>
-          <p>PDF por alumno con ✓ / ✗, puntos y una observación breve en cada respuesta. Más un resumen del grupo para ti.</p>
+          <p>PDF por alumno con ✓ / ✗, puntos y una observación breve en cada respuesta. Y un <strong>resumen del grupo</strong> —promedio y aprobados— solo para ti.</p>
         </div>
         <div class="feat">
           <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8f230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
           <h3>Se adapta a tu clave</h3>
-          <p>Tú defines resultado, puntos y tolerancia por reactivo. Hasta te avisa —en privado— si detecta un error en tu propia clave.</p>
+          <p>Defines resultado, puntos y <strong>tolerancia por reactivo</strong> (exacto o con margen ±). Hasta te avisa —en privado— si detecta un error en tu propia clave.</p>
         </div>
       </div>
     </div>
@@ -255,10 +298,44 @@
       <h2>De la clave a los PDFs, en 4 pasos.</h2>
       <p class="sub">Sin instalar nada. Desde tu navegador.</p>
       <div class="steps">
-        <div class="step"><div class="n">1</div><h3>Sube tu clave</h3><p>Tu PDF de respuestas — o deja que Tar-IA la resuelva a partir de los problemas.</p></div>
-        <div class="step"><div class="n">2</div><h3>Sube las tareas</h3><p>En PDF o como fotos agrupadas por nombre de alumno.</p></div>
-        <div class="step"><div class="n">3</div><h3>Tar-IA califica</h3><p>Compara cada tarea contra tu clave y asigna puntos y observaciones.</p></div>
-        <div class="step"><div class="n">4</div><h3>Descarga todo</h3><p>Un ZIP con los PDFs anotados por alumno + el resumen del grupo.</p></div>
+        <div class="step">
+          <div class="step-ill"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="16" y="9" width="32" height="46" rx="4" fill="#0e1114" stroke="#2a303a"/>
+            <line x1="22" y1="19" x2="42" y2="19" stroke="#6a7280" stroke-width="2" stroke-linecap="round"/>
+            <line x1="22" y1="27" x2="42" y2="27" stroke="#6a7280" stroke-width="2" stroke-linecap="round"/>
+            <line x1="22" y1="35" x2="35" y2="35" stroke="#6a7280" stroke-width="2" stroke-linecap="round"/>
+            <circle class="ill-pulse" cx="42" cy="43" r="10" fill="#c8f230"/>
+            <path d="M37.5 43 l3.2 3.2 5.6 -6.4" stroke="#0b0d10" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg></div>
+          <div class="n">1</div><h3>Sube tu clave</h3><p>Tu PDF de respuestas — o deja que Tar-IA la resuelva a partir de los problemas.</p>
+        </div>
+        <div class="step">
+          <div class="step-ill"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="20" y="26" width="26" height="30" rx="3" fill="#1b2a20" stroke="#2a303a"/>
+            <rect x="15" y="22" width="26" height="30" rx="3" fill="#0e1114" stroke="#2a303a"/>
+            <line x1="20" y1="31" x2="35" y2="31" stroke="#6a7280" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="20" y1="37" x2="35" y2="37" stroke="#6a7280" stroke-width="1.8" stroke-linecap="round"/>
+            <g class="ill-bob-up" stroke="#c8f230" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="32" y1="17" x2="32" y2="5"/><path d="M26 11 l6 -6 6 6"/></g>
+          </svg></div>
+          <div class="n">2</div><h3>Sube las tareas</h3><p>En PDF o como fotos agrupadas por nombre de alumno.</p>
+        </div>
+        <div class="step">
+          <div class="step-ill"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="18" y="11" width="28" height="42" rx="4" fill="#0e1114" stroke="#2a303a"/>
+            <line x1="24" y1="21" x2="40" y2="21" stroke="#6a7280" stroke-width="2" stroke-linecap="round"/>
+            <path d="M24 31 l3.5 3.5 7 -8" stroke="#c8f230" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <line x1="24" y1="44" x2="40" y2="44" stroke="#6a7280" stroke-width="2" stroke-linecap="round"/>
+            <rect class="ill-scan" x="14" y="31" width="36" height="3" rx="1.5" fill="#c8f230" opacity=".75"/>
+          </svg></div>
+          <div class="n">3</div><h3>Tar-IA califica</h3><p>Compara cada tarea contra tu clave y asigna puntos y observaciones.</p>
+        </div>
+        <div class="step">
+          <div class="step-ill"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M14 26 a4 4 0 0 1 4 -4 h7 l4 4 h13 a4 4 0 0 1 4 4 v18 a4 4 0 0 1 -4 4 H18 a4 4 0 0 1 -4 -4 z" fill="#0e1114" stroke="#2a303a"/>
+            <g class="ill-bob-down" stroke="#c8f230" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="32" y1="34" x2="32" y2="47"/><path d="M27 42 l5 5 5 -5"/></g>
+          </svg></div>
+          <div class="n">4</div><h3>Descarga o recíbelo por correo</h3><p>Un ZIP con los PDFs anotados por alumno + el resumen del grupo.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -271,16 +348,29 @@
       <p class="sub">Clara para el alumno, útil para ti.</p>
       <div class="example">
         <div>
-          <div class="grade-card" style="transform:none;width:100%;max-width:340px;margin:0 auto">
-            <div class="grade-head"><span class="g">7.5</span><span class="g10">/ 10</span><span class="who">Luis Ramírez<br>Álgebra · Tarea 2</span></div>
-            <div class="grade-body">
-              <div class="grow"><span class="mk ok">✓</span> 1a · Factorización correcta <b style="color:var(--text3);margin-left:auto">2.5</b></div>
-              <div class="grow"><span class="mk half">½</span> 1b · Resultado 0.6, se esperaba 0.5 <b style="color:var(--text3);margin-left:auto">1.0</b></div>
-              <div class="grow"><span class="mk ok">✓</span> 2 · Dentro de tolerancia ±0.5 <b style="color:var(--text3);margin-left:auto">2.5</b></div>
-              <div class="grow"><span class="mk bad">✗</span> 3 · No resuelto <b style="color:var(--text3);margin-left:auto">0.0</b></div>
-              <div class="grade-foot">Revisado con Tar-IA · enginerd.mx</div>
+          <div class="report-mock">
+            <div class="rm-head">
+              <div class="rm-grade">7.5<small> / 10.0</small></div>
+              <div class="rm-pill">APROBADO</div>
+              <div class="rm-name">Luis Ramírez</div>
+              <div class="rm-sub">Revisado con Tar-IA · enginerd.mx</div>
+            </div>
+            <div class="rm-body">
+              <div class="rm-title">Detalle de calificación</div>
+              <table class="rm-table">
+                <thead><tr><th>Prob.</th><th>Res.</th><th>Pts</th><th>Observación</th></tr></thead>
+                <tbody>
+                  <tr><td>1a</td><td class="rm-ok">✓</td><td>2.5</td><td>Factorización correcta.</td></tr>
+                  <tr><td>1b</td><td class="rm-half">½</td><td>1.5</td><td>Resultado 0.6; se esperaba 0.5.</td></tr>
+                  <tr><td>2</td><td class="rm-ok">✓</td><td>2.5</td><td>Dentro de la tolerancia ±0.5.</td></tr>
+                  <tr><td>3</td><td class="rm-half">½</td><td>1.0</td><td>Procedimiento ok, resultado incompleto.</td></tr>
+                </tbody>
+              </table>
+              <div class="rm-total"><span>TOTAL</span><span>7.5 / 10 = 7.5</span></div>
+              <div class="rm-rec"><b>Recomendación:</b> Buen manejo de factorización. Repasa el despeje del problema 3 para cerrar el procedimiento.</div>
             </div>
           </div>
+          <div class="example-note">Representación ilustrativa del PDF que recibe cada alumno.</div>
         </div>
         <div>
           <h3 style="font-size:20px;margin-bottom:6px">Cada respuesta, revisada.</h3>

@@ -21,7 +21,7 @@ let tareasFiles = [];
 let currentUser = null;
 
 // Interruptor: ponlo en true cuando la guía esté lista para todos los usuarios
-const AYUDA_PARA_TODOS = false;
+const AYUDA_PARA_TODOS = true;
 
 // Sonido al terminar (sin archivos, generado con Web Audio)
 function reproducirSonido(tipo){

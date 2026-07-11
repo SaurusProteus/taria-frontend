@@ -185,6 +185,17 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .howto-cta{text-align:center;font-size:14px;color:var(--text2);padding:18px;background:rgba(200,242,48,.06);border:0.5px solid rgba(200,242,48,.25);border-radius:12px}
 .howto-cta a{color:var(--accent);text-decoration:none;font-weight:600;margin-left:6px}
 @media(max-width:680px){.howto-grid{grid-template-columns:1fr}}
+/* Figura animada por paso de la guía */
+.howto-ill{margin-left:auto;flex-shrink:0;width:56px;height:56px;border-radius:11px;background:radial-gradient(circle at 50% 34%, rgba(200,242,48,.10), rgba(200,242,48,.02));border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center}
+.howto-ill svg{width:40px;height:40px}
+@keyframes hi-bob{0%,100%{transform:translateY(2px)}50%{transform:translateY(-3px)}}
+@keyframes hi-scan{0%,100%{transform:translateY(-12px)}50%{transform:translateY(12px)}}
+@keyframes hi-pulse{0%,100%{opacity:.5;transform:scale(.94)}50%{opacity:1;transform:scale(1)}}
+.hi-bob{animation:hi-bob 2.4s ease-in-out infinite}
+.hi-pulse{transform-origin:center;transform-box:fill-box;animation:hi-pulse 2s ease-in-out infinite}
+.hi-scan{animation:hi-scan 2.6s ease-in-out infinite}
+@media(max-width:520px){.howto-ill{display:none}}
+@media(prefers-reduced-motion:reduce){.hi-bob,.hi-pulse,.hi-scan{animation:none}}
 
 /* ── BANNER VERIFICACIÓN DE CORREO ── */
 #verify-banner{display:flex;align-items:center;gap:10px;background:rgba(245,176,96,.12);border-bottom:0.5px solid rgba(245,176,96,.35);color:#f5b060;font-size:13px;padding:11px 24px}

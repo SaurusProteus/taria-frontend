@@ -206,7 +206,7 @@ async function cargarAdmin(){
 const TOUR_STEPS = [
   {sel:null, title:'¡Bienvenido a Tar-IA! 👋', text:'Te muestro en 30 segundos cómo funciona. Puedes saltarte esto cuando quieras.'},
   {sel:'.side-link[data-view="calificar"]', title:'1 · Califica tareas', text:'Sube la clave de respuestas y los PDFs de tus alumnos. Tar-IA los revisa y te devuelve un ZIP con cada tarea anotada y un resumen del grupo.'},
-  {sel:'#user-creditos', title:'2 · Tus créditos', text:'Cada tarea revisada consume un crédito. Empiezas con 3 gratis para probar el sistema.'},
+  {sel:'#user-creditos', title:'2 · Tus créditos', text:'Cada tarea revisada consume un crédito. Empiezas con 20 gratis para probar el sistema.'},
   {sel:'.side-link[data-view="historial"]', title:'3 · Historial', text:'Consulta todas las tareas que has calificado, con su fecha y calificación.'},
   {sel:'.side-link[data-view="plan"]', title:'4 · Mi plan', text:'Compra más créditos o mejora tu plan cuando lo necesites.'},
   {sel:'.side-link[data-view="cuenta"]', title:'5 · Mi cuenta', text:'Tus datos, privacidad y documentos legales. Aquí también puedes dar de baja tu cuenta.'},

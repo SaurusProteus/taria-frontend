@@ -832,9 +832,17 @@ document.getElementById('btn-extra').addEventListener('click', ()=>iniciarChecko
 
 /* ── CHECKOUT MERCADOPAGO (Bricks) ── */
 let mp = null;
-function initMP(){
-  if(mp || typeof MercadoPago === 'undefined') return;
-  mp = new MercadoPago(MP_PUBLIC_KEY, { locale: 'es-MX' });
+let mpKey = null;
+/* La Public Key la manda el BACKEND junto con la preferencia. Así la llave pública y el
+   Access Token que creó la preferencia salen SIEMPRE de la misma app de MercadoPago
+   (mismas variables de Railway) y no se pueden desincronizar —que es lo que provoca el
+   error "una de las partes es de prueba". MP_PUBLIC_KEY queda solo como respaldo. */
+function initMP(publicKey){
+  if(typeof MercadoPago === 'undefined') return;
+  const key = publicKey || MP_PUBLIC_KEY;
+  if(mp && mpKey === key) return;      // ya inicializado con esa misma llave
+  mp = new MercadoPago(key, { locale: 'es-MX' });
+  mpKey = key;
 }
 
 async function iniciarCheckoutPlan(plan){
@@ -862,13 +870,13 @@ async function iniciarCheckoutExtras(){
 }
 
 function renderCheckout(pref, box){
-  initMP();
   if(!pref || !pref.preference_id){
     box.innerHTML = '<div class="alert alert-error">El servidor no devolvió una preferencia de pago válida.</div>';
     return;
   }
+  initMP(pref.public_key);   // llave pública que manda el backend (misma app que el token)
   if(!mp){
-    box.innerHTML = '<div class="alert alert-error">No se pudo cargar MercadoPago. Verifica la Public Key en js/api.js.</div>';
+    box.innerHTML = '<div class="alert alert-error">No se pudo cargar MercadoPago. Recarga la página e inténtalo de nuevo.</div>';
     return;
   }
   box.innerHTML = '<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Completa tu pago con MercadoPago:</div><div id="wallet-container"></div>';

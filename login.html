@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Aplica el tema ANTES del primer paint (evita el flashazo blanco al recargar) -->
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('taria_theme')||'dark');}catch(e){}</script>
 <title>Tar-IA — Inicia sesión</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230b0d10'/><text y='.9em' font-size='72' x='14' fill='%23c8f230' font-family='monospace' font-weight='bold'>T</text></svg>">
 <link rel="stylesheet" href="./css/style.css">
@@ -14,13 +16,15 @@
     background-image:linear-gradient(rgba(200,242,48,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,242,48,.04) 1px,transparent 1px);
     background-size:44px 44px;mask-image:radial-gradient(ellipse 60% 55% at 50% 40%,#000,transparent 75%)}
   .login-back{position:absolute;top:20px;left:24px;z-index:2;color:var(--text3);text-decoration:none;font-size:13px;font-family:'Space Mono',monospace}
-  .login-back:hover{color:var(--accent)}
+  .login-back:hover{color:var(--accent-text)}
+  .login-theme{position:absolute;top:16px;right:24px;z-index:2}
 </style>
 </head>
 <body>
 
 <div class="login-shell">
   <a href="./index.html" class="login-back">← Volver al inicio</a>
+  <button class="btn-theme login-theme" id="btn-theme" title="Cambiar a modo claro">☀️</button>
 
   <div class="login-card">
     <!-- Nerdy · mascota de Tar-IA (sostiene la palomita) -->

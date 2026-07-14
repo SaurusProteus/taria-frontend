@@ -42,3 +42,30 @@ async function apiDelete(path){
 function requireAuth(){
   if(!getToken()){ window.location.href = BASE + '/login.html'; }
 }
+
+/* ── Tema claro / oscuro (persistente) ───────────────────────────────────────
+   El <head> de cada página ya aplica data-theme ANTES del primer paint (evita el
+   flashazo). Aquí solo va el toggle y la sincronización del ícono del botón. */
+function getTema(){
+  try{ return localStorage.getItem('taria_theme') || 'dark'; }catch(e){ return 'dark'; }
+}
+function setTema(t){
+  document.documentElement.setAttribute('data-theme', t);
+  try{ localStorage.setItem('taria_theme', t); }catch(e){}
+  const b = document.getElementById('btn-theme');
+  if(b){
+    b.textContent = (t === 'light') ? '🌙' : '☀️';
+    b.title = (t === 'light') ? 'Cambiar a modo oscuro' : 'Cambiar a modo claro';
+  }
+}
+function toggleTema(){ setTema(getTema() === 'light' ? 'dark' : 'light'); }
+
+(function initTema(){
+  function wire(){
+    setTema(getTema());
+    const b = document.getElementById('btn-theme');
+    if(b && !b.dataset.wired){ b.dataset.wired = '1'; b.addEventListener('click', toggleTema); }
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();

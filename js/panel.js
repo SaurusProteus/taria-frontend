@@ -815,7 +815,9 @@ async function cargarPlanes(){
         <div class="plan-revs">${p.revisiones} revisiones</div>
         ${currentUser && currentUser.plan === key
           ? '<button class="btn-secondary" disabled style="opacity:.5;width:100%">Plan actual</button>'
-          : `<button class="btn-primary btn-comprar-plan" data-plan="${key}" style="width:100%;justify-content:center">Elegir plan</button>`}
+          : key === 'gratis'
+            ? '<button class="btn-secondary" disabled style="opacity:.5;width:100%">Plan de inicio</button>'
+            : `<button class="btn-primary btn-comprar-plan" data-plan="${key}" style="width:100%;justify-content:center">Elegir plan</button>`}
       </div>`).join('');
 
     document.getElementById('fx-disclaimer').style.display = 'block';

@@ -17,13 +17,34 @@
 </div>
 <script src="../../js/api.js"></script>
 <script>
+  // El backend ya NO manda el JWT en la URL: manda un código EFÍMERO (60s, un solo
+  // uso) que aquí se cambia por el JWT vía POST. Así el token de sesión nunca queda
+  // en historial, logs ni referrer. Se usa location.replace para que ni siquiera el
+  // código efímero quede en el historial.
   const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
-  if(token){
-    setToken(token);
-    window.location.href = '/panel.html';
+  const code = params.get('code');
+  const legado = params.get('token');   // compatibilidad con el flujo anterior
+
+  function irLogin(msg){
+    window.location.replace(BASE + '/login.html?msg=' + encodeURIComponent(msg));
+  }
+
+  if(code){
+    fetch(`${API_URL}/auth/exchange`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    }).then(async r => {
+      const data = await r.json().catch(() => ({}));
+      if(!r.ok || !data.token) throw new Error(data.detail || 'No se pudo iniciar sesión');
+      setToken(data.token);
+      window.location.replace(BASE + '/panel.html');
+    }).catch(e => irLogin(e.message || 'No se pudo iniciar sesión'));
+  } else if(legado){
+    setToken(legado);
+    window.location.replace(BASE + '/panel.html');
   } else {
-    window.location.href = '/login.html?msg=No se recibió token de autenticación';
+    irLogin('No se recibió el código de autenticación');
   }
 </script>
 </body>

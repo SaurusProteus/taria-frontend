@@ -24,11 +24,15 @@
 
   if(path.endsWith('/auth/callback') || path.endsWith('/auth/callback/')){
     const token = params.get('token');
+    const code = params.get('code');
     if(token){
       localStorage.setItem('taria_token', token);
-      window.location.href = B + '/panel.html';
+      window.location.replace(B + '/panel.html');
+    } else if(code){
+      // El canje del código efímero vive en la página física del callback
+      window.location.replace(B + '/auth/callback/?code=' + encodeURIComponent(code));
     } else {
-      window.location.href = B + '/login.html?msg=No se recibió token de autenticación';
+      window.location.href = B + '/login.html?msg=No se recibió el código de autenticación';
     }
   } else if(path.endsWith('/auth/error') || path.endsWith('/auth/error/')){
     const msg = params.get('msg') || 'Error al iniciar sesión';

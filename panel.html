@@ -160,6 +160,30 @@
           <textarea id="input-instrucciones" placeholder="Ej. Acepta resultados equivalentes aunque no estén simplificados…"></textarea>
         </div>
 
+        <div class="field">
+          <label>Modelo de revisión<span class="info-i">i<span class="info-pop"><strong>Estándar</strong> usa nuestro modelo rápido y preciso: la mejor opción para el día a día.<br><br><strong>Premium</strong> usa el modelo más potente, útil para tareas con letra difícil, procedimientos largos, o una calificación que un alumno disputó. Cuesta <strong>2 créditos por tarea</strong>.</span></span></label>
+          <div class="modelo-selector" id="modelo-selector">
+            <label class="modelo-opt is-active" data-modelo="estandar">
+              <input type="radio" name="modelo" value="estandar" checked>
+              <span class="modelo-ico">⚡</span>
+              <span class="modelo-body">
+                <span class="modelo-nombre">Estándar</span>
+                <span class="modelo-desc">Rápido y preciso · 1 crédito por tarea</span>
+              </span>
+              <span class="modelo-check">✓</span>
+            </label>
+            <label class="modelo-opt" data-modelo="premium">
+              <input type="radio" name="modelo" value="premium">
+              <span class="modelo-ico">⭐</span>
+              <span class="modelo-body">
+                <span class="modelo-nombre">Premium <span class="modelo-badge">más potente</span></span>
+                <span class="modelo-desc">Para tareas difíciles o disputadas · 2 créditos por tarea</span>
+              </span>
+              <span class="modelo-check">✓</span>
+            </label>
+          </div>
+        </div>
+
 
         <div id="progreso-wrap" style="display:none;margin-bottom:20px">
           <!-- Nerdy pensando: acompaña la espera sin ser invasivo -->

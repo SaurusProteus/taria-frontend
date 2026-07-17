@@ -20,6 +20,19 @@ let claveFile = null;
 let tareasFiles = [];
 let currentUser = null;
 
+// Modelo de revisión elegido por el docente. El backend cobra según pricing.py;
+// esto es solo para MOSTRAR el costo antes de calificar (backend = autoridad).
+let modeloSel = 'estandar';
+const CREDITOS_POR_TAREA = { estandar: 1, premium: 2 };
+function costoPorTarea(){ return CREDITOS_POR_TAREA[modeloSel] || 1; }
+
+// Etiqueta y costo a partir del id de modelo guardado en el historial.
+function infoModelo(m){
+  return (m || '').includes('opus')
+    ? { label: '⭐ Premium', creditos: 2 }
+    : { label: 'Estándar',  creditos: 1 };
+}
+
 // Interruptor: ponlo en true cuando la guía esté lista para todos los usuarios
 const AYUDA_PARA_TODOS = true;
 
@@ -602,6 +615,10 @@ function actualizarCreditosAviso(){
   const btn = document.getElementById('btn-calificar');
   const n = contarTareas(tareasFiles);
   const esOwner = currentUser && currentUser.plan === 'owner';
+  const mult = costoPorTarea();
+  const costo = n * mult;
+  const premium = modeloSel === 'premium';
+  const estrella = premium ? ' ⭐' : '';
 
   // El costo va EN el botón de acción — imposible calificar sin verlo.
   // (No se toca mientras está deshabilitado: ahí vive el spinner de progreso.)
@@ -609,21 +626,32 @@ function actualizarCreditosAviso(){
     if(n === 0){
       btn.innerHTML = `${SVG_CALIFICAR} Calificar y descargar ZIP`;
     } else if(esOwner){
-      btn.innerHTML = `${SVG_CALIFICAR} Calificar ${n} tarea${n!==1?'s':''}`;
+      btn.innerHTML = `${SVG_CALIFICAR} Calificar ${n} tarea${n!==1?'s':''}${estrella}`;
     } else {
-      btn.innerHTML = `${SVG_CALIFICAR} Calificar ${n} tarea${n!==1?'s':''} · ${n} crédito${n!==1?'s':''}`;
+      btn.innerHTML = `${SVG_CALIFICAR} Calificar ${n} tarea${n!==1?'s':''} · ${costo} crédito${costo!==1?'s':''}${estrella}`;
     }
   }
 
   if(n === 0 || esOwner){ el.style.display = 'none'; return; }
   const disponibles = currentUser ? currentUser.revisiones_restantes : 0;
-  const alcanza = disponibles >= n;
+  const alcanza = disponibles >= costo;
   el.style.display = 'block';
   el.innerHTML = `
-    Esta revisión consumirá <span class="cred-num">${n}</span> crédito${n!==1?'s':''}
-    <span class="cred-sub">1 por tarea · tienes ${disponibles}${alcanza ? ` → te quedarán ${disponibles - n}` : ''}</span>
-    ${alcanza ? '' : `<div class="cred-warn">⚠️ No te alcanza: faltan ${n - disponibles}. Quita archivos o compra más en "Mi plan".</div>`}`;
+    Esta revisión consumirá <span class="cred-num">${costo}</span> crédito${costo!==1?'s':''}
+    <span class="cred-sub">${mult} por tarea${premium ? ' (Premium ⭐)' : ''} · tienes ${disponibles}${alcanza ? ` → te quedarán ${disponibles - costo}` : ''}</span>
+    ${alcanza ? '' : `<div class="cred-warn">⚠️ No te alcanza: faltan ${costo - disponibles}. Quita archivos${premium ? ', usa Estándar,' : ''} o compra más en "Mi plan".</div>`}`;
 }
+
+/* ── Selector de modelo (estándar / premium) ── */
+document.querySelectorAll('#modelo-selector .modelo-opt').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    modeloSel = opt.dataset.modelo;
+    document.querySelectorAll('#modelo-selector .modelo-opt')
+      .forEach(o=>o.classList.toggle('is-active', o === opt));
+    const radio = opt.querySelector('input'); if(radio) radio.checked = true;
+    actualizarCreditosAviso();
+  });
+});
 
 /* ── ENVIAR A CALIFICAR ── */
 document.getElementById('btn-calificar').addEventListener('click', async ()=>{
@@ -651,11 +679,13 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     document.getElementById('calificar-alert').scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
-  if(currentUser && currentUser.plan !== 'owner' && currentUser.revisiones_restantes < nTareas){
+  const costoTotal = nTareas * costoPorTarea();
+  if(currentUser && currentUser.plan !== 'owner' && currentUser.revisiones_restantes < costoTotal){
     const restantes = currentUser.revisiones_restantes;
+    const premium = modeloSel === 'premium';
     alertBox.innerHTML = `<div class="alert alert-error">
-      Tienes <strong>${restantes} crédito${restantes!==1?'s':''}</strong> — pero esta entrega son ${nTareas} tareas.
-      ${restantes > 0 ? `Quita archivos para dejar ${restantes}, o ve a <strong>Mi plan</strong> para comprar más créditos.` : 'Ve a <strong>Mi plan</strong> para comprar créditos.'}
+      Tienes <strong>${restantes} crédito${restantes!==1?'s':''}</strong> — pero esta entrega cuesta <strong>${costoTotal}</strong> (${nTareas} tarea${nTareas!==1?'s':''}${premium?' × 2 premium':''}).
+      ${restantes > 0 ? `Quita archivos${premium?' o cambia a Estándar' :''}, o ve a <strong>Mi plan</strong> para comprar más créditos.` : 'Ve a <strong>Mi plan</strong> para comprar créditos.'}
     </div>`;
     return;
   }
@@ -690,6 +720,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     }
     tareasFiles.forEach(f => formData.append('tareas', f));
     formData.append('instrucciones', document.getElementById('input-instrucciones').value || '');
+    formData.append('modelo', modeloSel);   // 'estandar' | 'premium' (el backend valida)
     // La tolerancia ahora va POR problema dentro de la clave (columna Tol. ±), no global.
 
     const res = await fetch(`${API_URL}/calificar`, {
@@ -786,8 +817,8 @@ async function cargarHistorial(){
       <tr>
         <td>${t.nombre_archivo}</td>
         <td>${t.calificacion ?? '—'}</td>
-        <td style="text-align:center;color:var(--accent);font-family:'Space Mono',monospace;font-size:12px">−1</td>
-        <td style="font-family:'Space Mono',monospace;font-size:11px">${(t.modelo_usado||'').replace('claude-','')}</td>
+        <td style="text-align:center;color:var(--accent-text);font-family:'Space Mono',monospace;font-size:12px">−${infoModelo(t.modelo_usado).creditos}</td>
+        <td style="font-size:12px">${infoModelo(t.modelo_usado).label}</td>
         <td>${t.num_paginas ?? '—'}</td>
         <td><span class="badge ${t.estado === 'completado' ? 'badge-ok' : 'badge-pending'}">${t.estado}</span></td>
         <td style="font-size:12px;color:var(--text3)">${new Date(t.created_at).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'})}</td>

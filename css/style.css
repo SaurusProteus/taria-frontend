@@ -229,6 +229,21 @@ textarea:focus{outline:none;border-color:var(--accent-text)}
 .btn-del-fila{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px}
 .btn-del-fila:hover{color:var(--error)}
 
+/* ── SELECTOR DE MODELO (estándar / premium) ── */
+.modelo-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.modelo-selector{grid-template-columns:1fr}}
+.modelo-opt{position:relative;display:flex;align-items:flex-start;gap:11px;padding:13px 32px 13px 14px;border:1px solid var(--border2);border-radius:11px;background:var(--bg2);cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.modelo-opt:hover{border-color:var(--accent2)}
+.modelo-opt input{position:absolute;opacity:0;pointer-events:none}
+.modelo-opt.is-active{border-color:var(--accent);background:rgba(200,242,48,.10);box-shadow:0 0 0 1px var(--accent)}
+.modelo-ico{font-size:20px;line-height:1;margin-top:1px}
+.modelo-body{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.modelo-nombre{font-weight:600;font-size:14px;color:var(--text);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.modelo-badge{font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-text);background:rgba(200,242,48,.16);border:0.5px solid rgba(200,242,48,.45);padding:2px 7px;border-radius:99px}
+.modelo-desc{font-size:12px;color:var(--text2);line-height:1.35}
+.modelo-check{position:absolute;top:12px;right:12px;width:18px;height:18px;border-radius:99px;background:var(--accent);color:#0b0d10;font-size:12px;font-weight:700;display:none;align-items:center;justify-content:center;line-height:1}
+.modelo-opt.is-active .modelo-check{display:flex}
+
 /* ── AVISO DE CRÉDITOS ── */
 .creditos-aviso{background:rgba(200,242,48,.12);border:1px solid rgba(200,242,48,.45);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:14px;color:var(--text)}
 .creditos-aviso .cred-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent-text);font-size:22px;line-height:1;vertical-align:-2px;margin:0 2px}

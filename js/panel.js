@@ -567,9 +567,24 @@ function esNombreGenerico(filename){
 
 function agregarTareas(files){
   const permitidos = ['application/pdf','image/jpeg','image/png'];
-  const nuevos = files.filter(f=>permitidos.includes(f.type));
+  // Tope por archivo. Tar-IA optimiza las imágenes al calificar (100 DPI, máx 1600px,
+  // JPEG q70), así que NO hace falta subir en alta resolución: solo pesa y falla.
+  const MAX_MB = 25;
+  const grandes = files.filter(f => f.size > MAX_MB * 1024 * 1024);
+  const nuevos = files.filter(f => permitidos.includes(f.type) && f.size <= MAX_MB * 1024 * 1024);
   tareasFiles = tareasFiles.concat(nuevos);
   renderTareasList();
+
+  if(grandes.length){
+    const nombres = grandes.map(f => `${f.name} (${(f.size / 1048576).toFixed(0)} MB)`).join(', ');
+    const alertBox = document.getElementById('calificar-alert');
+    if(alertBox){
+      alertBox.innerHTML = `<div class="alert alert-error"><button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+        <strong>Archivo${grandes.length>1?'s':''} demasiado pesado${grandes.length>1?'s':''}</strong> — máximo <strong>${MAX_MB} MB</strong> por tarea: ${nombres}.<br>
+        <small style="opacity:.85">Suele pasar con fotos a máxima resolución. Usa una app de escaneo que comprima (CamScanner, Adobe Scan, "Escáner" del teléfono) o baja la resolución de la cámara. No pierdes nada: Tar-IA reduce la calidad de las imágenes al calificar, no necesita alta resolución.</small></div>`;
+      alertBox.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }
 
   // Avisar si hay imágenes con nombre genérico (cada una costaría 1 crédito)
   const genericas = tareasFiles.filter(f=>f.type !== 'application/pdf' && esNombreGenerico(f.name));
@@ -753,6 +768,7 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     if(!res.ok) throw new Error(`Error ${res.status}`);
 
     const invalidos = res.headers.get('X-Archivos-Invalidos');
+    const grandes = res.headers.get('X-Archivos-Grandes');
     const fallidas = res.headers.get('X-Tareas-Fallidas');
     const evaluadas = res.headers.get('X-Evaluadas');
     const totalArch = res.headers.get('X-Total-Archivos');
@@ -778,6 +794,10 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     if(invalidos){
       const nombres = decodeURIComponent(invalidos);
       msg += `<br><small style="color:#f5b060">Archivos no reconocidos (no consumieron crédito): ${nombres}</small>`;
+    }
+    if(grandes){
+      const nombres = decodeURIComponent(grandes);
+      msg += `<br><small style="color:#f5b060">Archivos demasiado pesados (máx 25 MB, no consumieron crédito): ${nombres}. Comprime las fotos o baja la resolución.</small>`;
     }
     if(fallidas){
       const nombres = decodeURIComponent(fallidas);

@@ -230,10 +230,10 @@ textarea:focus{outline:none;border-color:var(--accent-text)}
 .btn-del-fila:hover{color:var(--error)}
 
 /* ── AVISO DE CRÉDITOS ── */
-.creditos-aviso{background:rgba(200,242,48,.07);border:0.5px solid rgba(200,242,48,.3);border-radius:9px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text2)}
-.creditos-aviso .cred-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent-text);font-size:15px}
-.creditos-aviso .cred-sub{color:var(--text3);font-size:12px;margin-left:4px}
-.creditos-aviso .cred-warn{margin-top:8px;color:#ff8a8a;font-size:12px}
+.creditos-aviso{background:rgba(200,242,48,.12);border:1px solid rgba(200,242,48,.45);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:14px;color:var(--text)}
+.creditos-aviso .cred-num{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent-text);font-size:22px;line-height:1;vertical-align:-2px;margin:0 2px}
+.creditos-aviso .cred-sub{color:var(--text2);font-size:12.5px;margin-left:6px}
+.creditos-aviso .cred-warn{margin-top:8px;color:var(--error);font-size:13px;font-weight:600}
 
 /* ── ALERT ── */
 .alert{padding:14px 38px 14px 16px;border-radius:9px;font-size:13px;margin-bottom:20px;position:relative;line-height:1.55}

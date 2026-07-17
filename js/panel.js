@@ -595,17 +595,34 @@ function contarTareas(files){
   return pdfs + bases.size;
 }
 
+const SVG_CALIFICAR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+
 function actualizarCreditosAviso(){
   const el = document.getElementById('creditos-aviso');
+  const btn = document.getElementById('btn-calificar');
   const n = contarTareas(tareasFiles);
-  if(n === 0 || (currentUser && currentUser.plan === 'owner')){ el.style.display = 'none'; return; }
+  const esOwner = currentUser && currentUser.plan === 'owner';
+
+  // El costo va EN el botón de acción — imposible calificar sin verlo.
+  // (No se toca mientras está deshabilitado: ahí vive el spinner de progreso.)
+  if(btn && !btn.disabled){
+    if(n === 0){
+      btn.innerHTML = `${SVG_CALIFICAR} Calificar y descargar ZIP`;
+    } else if(esOwner){
+      btn.innerHTML = `${SVG_CALIFICAR} Calificar ${n} tarea${n!==1?'s':''}`;
+    } else {
+      btn.innerHTML = `${SVG_CALIFICAR} Calificar ${n} tarea${n!==1?'s':''} · ${n} crédito${n!==1?'s':''}`;
+    }
+  }
+
+  if(n === 0 || esOwner){ el.style.display = 'none'; return; }
   const disponibles = currentUser ? currentUser.revisiones_restantes : 0;
   const alcanza = disponibles >= n;
   el.style.display = 'block';
   el.innerHTML = `
-    <span class="cred-num">${n}</span> crédito${n!==1?'s':''} se consumirán en esta revisión
-    <span class="cred-sub">(1 por tarea · te quedan ${disponibles})</span>
-    ${alcanza ? '' : `<div class="cred-warn">No te alcanza: faltan ${n - disponibles}. Quita archivos o compra más en "Mi plan".</div>`}`;
+    Esta revisión consumirá <span class="cred-num">${n}</span> crédito${n!==1?'s':''}
+    <span class="cred-sub">1 por tarea · tienes ${disponibles}${alcanza ? ` → te quedarán ${disponibles - n}` : ''}</span>
+    ${alcanza ? '' : `<div class="cred-warn">⚠️ No te alcanza: faltan ${n - disponibles}. Quita archivos o compra más en "Mi plan".</div>`}`;
 }
 
 /* ── ENVIAR A CALIFICAR ── */
@@ -749,7 +766,9 @@ document.getElementById('btn-calificar').addEventListener('click', async ()=>{
     progresoBar.style.width = '100%';
     setTimeout(()=>{ progresoWrap.style.display = 'none'; progresoBar.style.width = '0%'; }, 1500);
     btn.disabled = false;
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Calificar y descargar ZIP';
+    // Restaura la etiqueta según el estado real: si quedaron archivos (p.ej. tras un
+    // error), vuelve a mostrar el conteo y costo; si se limpió todo, el texto base.
+    actualizarCreditosAviso();
   }
 });
 

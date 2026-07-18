@@ -23,7 +23,8 @@
   // código efímero quede en el historial.
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
-  const legado = params.get('token');   // compatibilidad con el flujo anterior
+  // Ya NO se acepta ?token= en la URL (se quitó la compatibilidad legacy): el JWT
+  // nunca viaja por la URL, solo el código efímero que se canjea vía POST.
 
   function irLogin(msg){
     window.location.replace(BASE + '/login.html?msg=' + encodeURIComponent(msg));
@@ -40,9 +41,6 @@
       setToken(data.token);
       window.location.replace(BASE + '/panel.html');
     }).catch(e => irLogin(e.message || 'No se pudo iniciar sesión'));
-  } else if(legado){
-    setToken(legado);
-    window.location.replace(BASE + '/panel.html');
   } else {
     irLogin('No se recibió el código de autenticación');
   }

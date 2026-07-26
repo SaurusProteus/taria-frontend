@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+# Zona privada de la app (no indexar). login.html NO se bloquea aquí a propósito:
+# lleva <meta noindex> y debe ser rastreable para que Google lo respete y lo saque.
+Disallow: /panel.html
+Disallow: /reset.html
+Disallow: /auth/
+
+Sitemap: https://taria.enginerd.mx/sitemap.xml

@@ -1,3 +1,14 @@
+/* Deep-link: si llegamos con #vista (p.ej. panel.html#plan desde un correo de
+   recordatorio) pero AÚN sin sesión, recordamos la vista para restaurarla al volver
+   del login. Sobrevive el redirect a login.html y el callback de Google porque es la
+   misma pestaña → sessionStorage persiste. Debe correr ANTES de requireAuth (que
+   rebota a login perdiendo el hash). */
+try{
+  if(!getToken() && location.hash){
+    sessionStorage.setItem('taria_deeplink', location.hash.replace(/^#/, ''));
+  }
+}catch(_){}
+
 requireAuth();
 
 /* ── Cierre de sesión por inactividad (2 horas) ── */
@@ -414,7 +425,26 @@ async function cargarUsuario(){
     console.error(e);
   }
 }
-cargarUsuario();
+
+/* ── DEEP-LINK a una vista (#plan, #historial, …) ──
+   Reusa el router existente: dispara el mismo click del botón lateral, que también
+   carga los datos de la vista (cargarPlanes, etc.). Se llama DESPUÉS de cargarUsuario
+   para que "Mi plan" ya conozca el plan actual del usuario. La vista puede venir del
+   hash de la URL o de sessionStorage, si el deep-link sobrevivió un login. Es de un
+   solo uso: se limpia siempre para no reabrir la vista en cargas posteriores. */
+function abrirVistaDesdeHash(){
+  let vista = (location.hash || '').replace(/^#/, '').trim();
+  if(!vista){
+    try{ vista = sessionStorage.getItem('taria_deeplink') || ''; }catch(_){ vista = ''; }
+  }
+  try{ sessionStorage.removeItem('taria_deeplink'); }catch(_){}
+  if(!vista) return;
+  const link = Array.from(document.querySelectorAll('.side-link'))
+    .find(b => b.dataset.view === vista);
+  if(link) link.click();
+}
+
+cargarUsuario().then(abrirVistaDesdeHash);
 
 /* ── SUBIDA DE CLAVE ── */
 const inputClave = document.getElementById('input-clave');
